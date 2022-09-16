@@ -2,18 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Card : MonoBehaviour
+public class Card : Cardlike
 {
     private CardPile _cardPile;
+
+    private CardPileManager _cardPileManager;
+
+    private int _cardLabel;
+
 
     public void Start()
     {
         _cardPile = null;
     }
 
-    public void Update()
+    public void Init(CardPileManager cardPileManager, int cardLabel)
     {
-       
+        _cardPileManager = cardPileManager;
+        _cardLabel = cardLabel;
     }
 
     public void AddCardToCardPile(Card cardToAdd)
@@ -23,15 +29,16 @@ public class Card : MonoBehaviour
 
         if (_cardPile == null)
         {
-            _cardPile = CreateCardPile();
+            _cardPile = _cardPileManager.CreateCardPile(this);
         }
 
         _cardPile.AddCard(cardToAdd);
 
     }
 
-    private CardPile CreateCardPile()
+
+    public int GetCardLabel()
     {
-        return new CardPile(this);
+        return _cardLabel;
     }
 }
