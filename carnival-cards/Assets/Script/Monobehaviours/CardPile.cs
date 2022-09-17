@@ -6,27 +6,15 @@ public class CardPile : Cardlike
 {
     private List<Card> _cardList;
 
-    private CardlikeManager _cardlikeManager;
-
-
-
-    public void Init(Card card, CardlikeManager cardlikeManager)
+    public void Awake()
     {
-        _cardlikeManager = cardlikeManager;
         _cardList = new List<Card>();
-        AddCard(card);
-
-        SetCardTransformOnEntry(card);
     }
 
     public void AddCard(Card card)
     {
         card.SetCardPile(this);
         _cardList.Add(card);
-
-        // remove card out of CardlikeManager
-        _cardlikeManager.RemoveCardlike(card);
-        
 
         SetCardTransformOnEntry(card);
     }
@@ -43,11 +31,4 @@ public class CardPile : Cardlike
         card.transform.localRotation = Quaternion.identity;
     }
 
-    public override void AddCardToCardPile(Card cardToAdd)
-    {
-        // SHOULD ONLY BE CALLED IF A CARD IS PUT ON TOP OF A CARD(PILE), NEVER IF A CARDPILE IS PUT ON A CARD(PILE)
-
-        AddCard(cardToAdd);
-
-    }
 }

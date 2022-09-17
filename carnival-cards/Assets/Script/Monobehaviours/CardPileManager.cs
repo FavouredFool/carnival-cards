@@ -4,16 +4,31 @@ using UnityEngine;
 
 public class CardPileManager : MonoBehaviour
 {
-    public GameObject CardPilePrefab;
-    public CardlikeManager CardLikeManager;
+    public GameObject _cardPilePrefab;
+    private CardlikeManager _cardlikeManager;
+
+    public void Awake()
+    {
+        _cardlikeManager = GetComponent<CardlikeManager>();
+    }
 
     public CardPile CreateCardPile(Card firstCard)
     {
-        CardPile cardPile = Instantiate(CardPilePrefab, firstCard.transform.position, firstCard.transform.rotation).GetComponent<CardPile>();
-        cardPile.Init(firstCard, CardLikeManager);
+        CardPile newPile = Instantiate(_cardPilePrefab, firstCard.transform.position, firstCard.transform.rotation).GetComponent<CardPile>();
+        _cardlikeManager.AddCardlike(newPile);
+        return newPile;
+    }
 
-        CardLikeManager.AddCardlike(cardPile);
-
-        return cardPile;
+    public void AddCardToCardPile(Card card, CardPile baseCardPile)
+    {
+        foreach (CardPile pile in _cardlikeManager.GetAllCardPiles())
+        {
+            if (pile.Equals(baseCardPile))
+            {
+                pile.AddCard(card);
+                _cardlikeManager.RemoveCardlike(card);
+                return;
+            }
+        }
     }
 }

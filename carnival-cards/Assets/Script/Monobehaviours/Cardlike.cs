@@ -4,5 +4,5 @@ using UnityEngine;
 
 public abstract class Cardlike : MonoBehaviour
 {
-    public abstract void AddCardToCardPile(Card newCard);
+
 }

@@ -1,54 +1,45 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class CardlikeManager : MonoBehaviour
 {
-    public GameObject CardPrefab;
-    public CardPileManager CardPileManager;
+    private CardPileManager _cardPileManager;
+    private CardManager _cardManager;
 
-    public Material cardMat1;
-    public Material cardMat2;
+    protected readonly List<Cardlike> _cardlikeList = new();
 
-    private List<Cardlike> _cardlikeList;
+    protected int counter = 0;
 
-    private int counter = 0;
-
-    void Start()
+    void Awake()
     {
-        _cardlikeList = new List<Cardlike>();
+        _cardPileManager = GetComponent<CardPileManager>();
+        _cardManager = GetComponent<CardManager>();
     }
 
-    void Update()
+    public virtual void AddCardToCardlike(Card card, Cardlike baseCardlike)
     {
-        if (Input.GetKeyDown(KeyCode.S))
+        if (baseCardlike is Card baseCard)
         {
-            Card newCard = CreateCard();
-
-            if (newCard == _cardlikeList[0])
-            {
-                return;
-            }
-
-            _cardlikeList[^2].AddCardToCardPile(newCard);
+            _cardManager.AddCardToCard(card, baseCard);
         }
-        else if (Input.GetKeyDown(KeyCode.D))
+        else if (baseCardlike is CardPile baseCardPile)
         {
-            // Set card on the ground to the right of stack
-            
-
+            _cardPileManager.AddCardToCardPile(card, baseCardPile);
         }
+        else
+        {
+            Debug.LogWarning("FEHLER");
+        }
+        
     }
 
-    private Card CreateCard()
+    public Card CreateCard()
     {
-        Card newCard = Instantiate(CardPrefab, Vector3.zero, Quaternion.identity).GetComponent<Card>();
-        newCard.Init(CardPileManager, counter);
+        Card newCard = _cardManager.CreateCard(counter);
 
-        Material material = counter % 2 == 0 ? cardMat1 : cardMat2;
-        newCard.GetComponent<MeshRenderer>().material = material;
-
-        _cardlikeList.Add(newCard);
+        AddCardlike(newCard);
 
         counter++;
 
@@ -63,5 +54,30 @@ public class CardlikeManager : MonoBehaviour
     public void RemoveCardlike(Cardlike cardlike)
     {
         _cardlikeList.Remove(cardlike);
+    }
+
+    public List<CardPile> GetAllCardPiles()
+    {
+        return _cardlikeList.Where(e => e is CardPile).Cast<CardPile>().ToList();
+    }
+
+    public List<Card> GetAllCards()
+    {
+        return _cardlikeList.Where(e => e is Card).Cast<Card>().ToList();
+    }
+
+    public List<Cardlike> GetAllCardlikes()
+    {
+        return _cardlikeList;
+    }
+
+    public CardManager GetCardManager()
+    {
+        return _cardManager;
+    }
+
+    public CardPileManager GetCardPileManager()
+    {
+        return _cardPileManager;
     }
 }
