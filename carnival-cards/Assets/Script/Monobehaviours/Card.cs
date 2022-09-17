@@ -11,7 +11,7 @@ public class Card : Cardlike
     private int _cardLabel;
 
 
-    public void Start()
+    public void Awake()
     {
         _cardPile = null;
     }
@@ -22,7 +22,7 @@ public class Card : Cardlike
         _cardLabel = cardLabel;
     }
 
-    public void AddCardToCardPile(Card cardToAdd)
+    public override void AddCardToCardPile(Card cardToAdd)
     {
         // SHOULD ONLY BE CALLED IF A CARD IS PUT ON TOP OF A CARD(PILE), NEVER IF A CARDPILE IS PUT ON A CARD(PILE)
 
@@ -40,5 +40,15 @@ public class Card : Cardlike
     public int GetCardLabel()
     {
         return _cardLabel;
+    }
+
+    public void SetCardPile(CardPile cardPile)
+    {
+        _cardPile = cardPile;
+    }
+
+    public CardPile GetCardPile()
+    {
+        return _cardPile;
     }
 }

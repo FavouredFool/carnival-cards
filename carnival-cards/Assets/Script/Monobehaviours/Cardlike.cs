@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Cardlike : MonoBehaviour
+public abstract class Cardlike : MonoBehaviour
 {
-
+    public abstract void AddCardToCardPile(Card newCard);
 }

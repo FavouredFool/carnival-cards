@@ -362,7 +362,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh27026
+  m_Name: pb_Mesh27122
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
@@ -896,6 +896,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CardPilePrefab: {fileID: 8492275688627709227, guid: 19977e66cbb08964eb31db71d5465dff,
     type: 3}
+  CardLikeManager: {fileID: 1548774860}
 --- !u!4 &1285999621
 Transform:
   m_ObjectHideFlags: 0
