@@ -2,16 +2,16 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Card : Cardlike
+public class Card : MonoBehaviour
 {
-    private CardPile _cardPile;
+    private Pile _pile;
 
     private int _cardLabel;
 
 
     public void Awake()
     {
-        _cardPile = null;
+        _pile = null;
     }
 
     public void Init(int cardLabel)
@@ -24,13 +24,13 @@ public class Card : Cardlike
         return _cardLabel;
     }
 
-    public void SetCardPile(CardPile cardPile)
+    public void SetPile(Pile pile)
     {
-        _cardPile = cardPile;
+        _pile = pile;
     }
 
-    public CardPile GetCardPile()
+    public Pile GetPile()
     {
-        return _cardPile;
+        return _pile;
     }
 }

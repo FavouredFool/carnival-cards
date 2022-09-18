@@ -362,7 +362,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh27122
+  m_Name: pb_Mesh50980
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
@@ -874,7 +874,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 997099334}
-  - component: {fileID: 997099338}
   - component: {fileID: 997099336}
   - component: {fileID: 997099337}
   m_Layer: 0
@@ -922,23 +921,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 997099333}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72baebed34073d04497f876050a87f66, type: 3}
+  m_Script: {fileID: 11500000, guid: 50bf41edea69ad14a9ea9330653774a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _cardPilePrefab: {fileID: 8492275688627709227, guid: 19977e66cbb08964eb31db71d5465dff,
     type: 3}
---- !u!114 &997099338
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 997099333}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 50bf41edea69ad14a9ea9330653774a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!850595691 &1942695381
 LightingSettings:
   m_ObjectHideFlags: 0
@@ -1031,7 +1018,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ea8c6d231f0d244a8a770d0969211ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cardlikeManager: {fileID: 997099338}
+  _cardlikeManager: {fileID: 997099337}
 --- !u!4 &2069554235
 Transform:
   m_ObjectHideFlags: 0

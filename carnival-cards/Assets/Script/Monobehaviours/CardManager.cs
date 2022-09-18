@@ -5,36 +5,17 @@ using UnityEngine;
 public class CardManager : MonoBehaviour
 {
     public GameObject _cardPrefab;
-    private CardlikeManager _cardlikeManager;
 
-    public void Awake()
-    {
-        _cardlikeManager = GetComponent<CardlikeManager>();
-    }
+    int counter = 0;
 
-    public Card CreateCard(int counter)
+    public Card CreateCard()
     {
         Card newCard = Instantiate(_cardPrefab, Vector3.zero, Quaternion.identity).GetComponent<Card>();
         newCard.Init(counter);
 
+        counter++;
+
         return newCard;
     }
 
-    public void AddCardToCard(Card cardToAdd, Card baseCard)
-    {
-        foreach (Card interatedCard in _cardlikeManager.GetAllCards())
-        {
-            if (interatedCard.Equals(baseCard))
-            {
-                CardPile newCardPile = _cardlikeManager.GetCardPileManager().CreateCardPile(baseCard);
-                newCardPile.AddCard(baseCard);
-                newCardPile.AddCard(cardToAdd);
-
-                _cardlikeManager.RemoveCardlike(baseCard);
-                _cardlikeManager.RemoveCardlike(cardToAdd);
-
-                return;
-            }
-        }
-    }
 }

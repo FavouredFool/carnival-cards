@@ -4,23 +4,27 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
-    public CardlikeManager _cardlikeManager;
+    public PileManager _cardlikeManager;
     
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
-            List<Cardlike> cardlikeList = _cardlikeManager.GetAllCardlikes();
+            _cardlikeManager.CreateCardAndPile();
 
-            Card newCard = _cardlikeManager.CreateCard();
+            List<Pile> pileListCopy = new List<Pile>(_cardlikeManager.GetAllPiles());
 
-            if (newCard == cardlikeList[0])
+            if (pileListCopy.Count > 1)
             {
-                return;
+                _cardlikeManager.AddPileToPile(pileListCopy[^1], pileListCopy[^2]);
             }
+        }
+        else if (Input.GetKeyDown(KeyCode.A))
+        {
+            foreach (Pile pile in _cardlikeManager.GetAllPiles())
+            {
 
-            _cardlikeManager.AddCardToCardlike(newCard, cardlikeList[^2]);
-
+            }
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
