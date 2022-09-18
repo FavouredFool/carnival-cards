@@ -4,13 +4,13 @@ using UnityEngine;
 
 public class CardManager : MonoBehaviour
 {
-    public GameObject _cardPrefab;
+    public CardFactory _cardFactory;
 
     int counter = 0;
 
     public Card CreateCard()
     {
-        Card newCard = Instantiate(_cardPrefab, Vector3.zero, Quaternion.identity).GetComponent<Card>();
+        Card newCard = _cardFactory.CreateNewInstance();
         newCard.Init(counter);
 
         counter++;

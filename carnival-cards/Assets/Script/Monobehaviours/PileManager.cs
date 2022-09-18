@@ -5,7 +5,7 @@ using System.Linq;
 
 public class PileManager : MonoBehaviour
 {
-    public GameObject _pilePrefab;
+    public PileFactory _pileFactory;
 
     private CardManager _cardManager;
     
@@ -75,7 +75,7 @@ public class PileManager : MonoBehaviour
 
     public Pile CreatePile()
     {
-        Pile newPile = Instantiate(_pilePrefab).GetComponent<Pile>();
+        Pile newPile = _pileFactory.CreateNewInstance();
         AddPileToList(newPile);
         return newPile;
     }
