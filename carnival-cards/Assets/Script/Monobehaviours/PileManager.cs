@@ -27,18 +27,55 @@ public class PileManager : MonoBehaviour
     {
         Card newCard = _cardManager.CreateCard();
 
-        return CreatePile(newCard);
+        return CreatePileWithCard(newCard);
     }
 
-    public void CreateCardAddToPile()
+    public void CreateCardAddToPile(Pile pile)
     {
-
+        Card newCard = _cardManager.CreateCard();
+        pile.AddCardOnTop(newCard);
     }
 
-    public Pile CreatePile(Card firstCard)
+    public Pile SplitPileinHalf(Pile pile)
+    {
+        return SplitPileAtIndex(pile, Mathf.CeilToInt(pile.GetCardList().Count / 2f));
+    }
+
+    public Pile SplitPileAtIndex(Pile pile, int index)
+    {
+        Pile newPile = CreatePile();
+        List<Card> pileList = pile.GetCardList();
+
+        for (int i = pileList.Count - 1; i >= index; i--)
+        {
+            newPile.AddCardOnTop(pileList[i]);
+            pileList.RemoveAt(i);
+        }
+        newPile.ReverseCards();
+
+        return newPile;
+    }
+
+    public void MovePile(Pile pile, Vector2 newPosition)
+    {
+        pile.transform.position = new Vector3(newPosition.x, pile.transform.position.y, newPosition.y);
+    }
+
+    public void MovePileRandom(Pile pile)
+    {
+        MovePile(pile, Random.insideUnitCircle * 3);
+    }
+
+    public Pile CreatePileWithCard(Card firstCard)
+    {
+        Pile newPile = CreatePile();
+        newPile.AddCardOnTop(firstCard);
+        return newPile;
+    }
+
+    public Pile CreatePile()
     {
         Pile newPile = Instantiate(_pilePrefab).GetComponent<Pile>();
-        newPile.AddCard(firstCard);
         AddPileToList(newPile);
         return newPile;
     }

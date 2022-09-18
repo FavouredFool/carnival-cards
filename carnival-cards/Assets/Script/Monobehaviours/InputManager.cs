@@ -10,25 +10,28 @@ public class InputManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
-            _cardlikeManager.CreateCardAndPile();
+            Pile newPile = _cardlikeManager.CreateCardAndPile();
+            _cardlikeManager.MovePileRandom(newPile);
 
-            List<Pile> pileListCopy = new List<Pile>(_cardlikeManager.GetAllPiles());
-
-            if (pileListCopy.Count > 1)
-            {
-                _cardlikeManager.AddPileToPile(pileListCopy[^1], pileListCopy[^2]);
-            }
         }
         else if (Input.GetKeyDown(KeyCode.A))
         {
-            foreach (Pile pile in _cardlikeManager.GetAllPiles())
-            {
+            List<Pile> pileListCopy = new List<Pile>(_cardlikeManager.GetAllPiles());
 
+            foreach (Pile pile in pileListCopy)
+            {
+                _cardlikeManager.CreateCardAddToPile(pile);
             }
         }
         else if (Input.GetKeyDown(KeyCode.D))
         {
-            // Set card on the ground to the right of pile
+            List<Pile> pileListCopy = new List<Pile>(_cardlikeManager.GetAllPiles());
+
+            foreach (Pile pile in pileListCopy)
+            {
+                Pile newPile = _cardlikeManager.SplitPileinHalf(pile);
+                _cardlikeManager.MovePileRandom(newPile);
+            }
         }
     }
 }
