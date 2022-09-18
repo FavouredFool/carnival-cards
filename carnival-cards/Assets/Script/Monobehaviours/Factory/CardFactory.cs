@@ -10,7 +10,7 @@ public class CardFactory : GenericFactory<Card>
     public override Card CreateNewInstance()
     {
         Card newCard = base.CreateNewInstance();
-        newCard.Init(++counter);
+        newCard.Init(counter++);
 
         return newCard;
 

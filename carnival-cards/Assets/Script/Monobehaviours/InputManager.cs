@@ -38,5 +38,20 @@ public class InputManager : MonoBehaviour
                 
             }
         }
+        else if (Input.GetKeyDown(KeyCode.Q))
+        {
+            List<Pile> pileListCopy = new List<Pile>(_cardlikeManager.GetAllPiles());
+
+            foreach (Pile pile in pileListCopy)
+            {
+                Pile newPile = _cardlikeManager.SplitPileAtRange(pile, 1, 1);
+
+                if (newPile != pile)
+                {
+                    _cardlikeManager.MovePileRandom(newPile);
+                }
+
+            }
+        }
     }
 }

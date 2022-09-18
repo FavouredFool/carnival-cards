@@ -30,11 +30,25 @@ public class Pile : MonoBehaviour
     public void AddPile(Pile pile)
     {
         List<Card> cardListCopy = new List<Card>(pile.GetCardList());
+        AddCardList(cardListCopy);
+    }
 
-        foreach (Card card in cardListCopy)
+    public void AddCardList(List<Card> cardList)
+    {
+        foreach (Card card in cardList)
         {
             AddCardOnTop(card);
         }
+    }
+
+    public void ClearCardList()
+    {
+        foreach(Card card in _cardList)
+        {
+            // Hier würde jetzt das Problem entstehen, dass eine Karte eigentlich immer eine Pile haben muss
+        }
+
+        _cardList.Clear();
     }
 
     public void ReverseCards()
@@ -71,9 +85,16 @@ public class Pile : MonoBehaviour
         }
     }
 
+    public void DeleteIfEmpty()
+    {
+        if (GetCardList().Count <= 0)
+        {
+            Destroy(gameObject);
+        }
+    }
+
     public List<Card> GetCardList()
     {
         return _cardList;
     }
-
 }

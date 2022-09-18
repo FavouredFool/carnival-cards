@@ -36,6 +36,13 @@ public class CardManager : MonoBehaviour
         return newPile;
     }
 
+    public Pile CreatePileWithCards(List<Card> cardList)
+    {
+        Pile newPile = CreatePile();
+        newPile.AddCardList(cardList);
+        return newPile;
+    }
+
     public void CreateCardAddToPile(Pile pile)
     {
         Card newCard = CreateCard();
@@ -67,14 +74,35 @@ public class CardManager : MonoBehaviour
         }
 
         Pile newPile = CreatePile();
-        List<Card> pileList = pile.GetCardList();
+        List<Card> pileCards = pile.GetCardList();
 
-        for (int i = pileList.Count - 1; i >= index; i--)
+        for (int i = pileCards.Count - 1; i >= index; i--)
         {
-            newPile.AddCardOnTop(pileList[i]);
-            pileList.RemoveAt(i);
+            newPile.AddCardOnTop(pileCards[i]);
+            pileCards.RemoveAt(i);
         }
+
         newPile.ReverseCards();
+
+        return newPile;
+    }
+
+    public Pile SplitPileAtRange(Pile pile, int index, int cardCount)
+    {
+        Debug.Assert(cardCount > 0);
+        Debug.Assert(0 <= index && index + cardCount - 1 < pile.GetCardList().Count);
+        
+        List<Card> currentPileCards = pile.GetCardList();
+        List<Card> newCards = currentPileCards.GetRange(index, cardCount);
+
+        // Prune old List
+        //pile.ClearCardList();
+        pile.AddCardList(currentPileCards.Except(newCards).ToList());
+
+        //pile.DeleteIfEmpty();
+
+        // Create new Pile
+        Pile newPile = CreatePileWithCards(newCards);
 
         return newPile;
     }
