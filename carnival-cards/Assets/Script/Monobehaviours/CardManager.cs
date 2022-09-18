@@ -1,21 +1,106 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class CardManager : MonoBehaviour
 {
+    public PileFactory _pileFactory;
     public CardFactory _cardFactory;
 
-    int counter = 0;
+    protected List<Pile> _pileList;
+
+    public void Start()
+    {
+        _pileList = new();
+    }
+
+    public void AddPileToPile(Pile pileToAdd, Pile pileBase)
+    {
+        pileBase.AddPile(pileToAdd);
+        RemovePileFromList(pileToAdd);
+        Destroy(pileToAdd.gameObject);
+    }
+
+    public Pile CreateCardAndPile()
+    {
+        Card newCard = CreateCard();
+
+        return CreatePileWithCard(newCard);
+    }
+
+    public Pile CreatePileWithCard(Card firstCard)
+    {
+        Pile newPile = CreatePile();
+        newPile.AddCardOnTop(firstCard);
+        return newPile;
+    }
+
+    public void CreateCardAddToPile(Pile pile)
+    {
+        Card newCard = CreateCard();
+        pile.AddCardOnTop(newCard);
+    }
+
+    public Pile CreatePile()
+    {
+        Pile newPile = _pileFactory.CreateNewInstance();
+        AddPileToList(newPile);
+        return newPile;
+    }
 
     public Card CreateCard()
     {
-        Card newCard = _cardFactory.CreateNewInstance();
-        newCard.Init(counter);
-
-        counter++;
-
-        return newCard;
+        return _cardFactory.CreateNewInstance();
     }
 
+    public Pile SplitPileInHalf(Pile pile)
+    {
+        return SplitPileAtIndex(pile, Mathf.CeilToInt(pile.GetCardList().Count / 2f));
+    }
+
+    public Pile SplitPileAtIndex(Pile pile, int index)
+    {
+        if (pile.GetCardList().Count < 2)
+        {
+            return pile;
+        }
+
+        Pile newPile = CreatePile();
+        List<Card> pileList = pile.GetCardList();
+
+        for (int i = pileList.Count - 1; i >= index; i--)
+        {
+            newPile.AddCardOnTop(pileList[i]);
+            pileList.RemoveAt(i);
+        }
+        newPile.ReverseCards();
+
+        return newPile;
+    }
+
+    public void MovePile(Pile pile, Vector2 newPosition)
+    {
+        pile.transform.position = new Vector3(newPosition.x, pile.transform.position.y, newPosition.y);
+    }
+
+    public void MovePileRandom(Pile pile)
+    {
+        MovePile(pile, Random.insideUnitCircle * 3);
+    }
+
+    public void AddPileToList(Pile pile)
+    {
+        _pileList.Add(pile);
+    }
+
+    public void RemovePileFromList(Pile pile)
+    {
+        _pileList.Remove(pile);
+    }
+
+    public List<Pile> GetAllPiles()
+    {
+        return _pileList;
+    }
 }

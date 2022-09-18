@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour
 {
-    public PileManager _cardlikeManager;
+    public CardManager _cardlikeManager;
     
     void Update()
     {
@@ -29,8 +29,13 @@ public class InputManager : MonoBehaviour
 
             foreach (Pile pile in pileListCopy)
             {
-                Pile newPile = _cardlikeManager.SplitPileinHalf(pile);
-                _cardlikeManager.MovePileRandom(newPile);
+                Pile newPile = _cardlikeManager.SplitPileInHalf(pile);
+
+                if (newPile != pile)
+                {
+                    _cardlikeManager.MovePileRandom(newPile);
+                }
+                
             }
         }
     }

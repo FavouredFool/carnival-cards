@@ -4,8 +4,15 @@ using UnityEngine;
 
 public class CardFactory : GenericFactory<Card>
 {
+
+    int counter = 0;
+
     public override Card CreateNewInstance()
     {
-        return base.CreateNewInstance();
+        Card newCard = base.CreateNewInstance();
+        newCard.Init(++counter);
+
+        return newCard;
+
     }
 }
