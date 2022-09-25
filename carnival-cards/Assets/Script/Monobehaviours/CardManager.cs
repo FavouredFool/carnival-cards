@@ -83,7 +83,7 @@ public class CardManager : MonoBehaviour
             pileCards.RemoveAt(i);
         }
 
-        newPile.ReverseCards();
+        newPile.GetCardList().Reverse();
 
         return newPile;
     }
@@ -98,7 +98,7 @@ public class CardManager : MonoBehaviour
 
         List<Card> remainingCardList = currentPileCards.Except(newCards).ToList();
 
-        pile.ClearCardList();
+        pile.GetCardList().Clear();
         pile.AddCardList(remainingCardList);
 
         // Create new Pile

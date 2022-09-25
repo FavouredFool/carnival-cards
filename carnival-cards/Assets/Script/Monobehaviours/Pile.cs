@@ -13,17 +13,13 @@ public class Pile : MonoBehaviour
 
     public void Update()
     {
+        // TURN THIS INTO OBSERVER
         RecalculateTransformForAllCards();
 
         if (_cardList.Count <= 0)
         {
             Debug.LogWarning("Pile Empty - will be removed");
         }
-    }
-
-    public void ClearCardList()
-    {
-        _cardList.Clear();
     }
 
     public void AddCardOnTop(Card card)
@@ -43,13 +39,6 @@ public class Pile : MonoBehaviour
         {
             AddCardOnTop(card);
         }
-    }
-
-    public void ReverseCards()
-    {
-        GetCardList().Reverse();
-
-        RecalculateTransformForAllCards();
     }
 
     public void RecalculateTransformForAllCards()
