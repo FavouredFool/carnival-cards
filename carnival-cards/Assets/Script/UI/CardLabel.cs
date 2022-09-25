@@ -10,6 +10,6 @@ public class CardLabel : MonoBehaviour
 
     public void Update()
     {
-        label.text = card.GetCardLabel().ToString();
+        label.text = card.GetCardLabel();
     }
 }

@@ -5,12 +5,12 @@ using UnityEngine;
 public class CardFactory : GenericFactory<Card>
 {
 
-    int counter = 0;
-
-    public override Card CreateNewInstance()
+    public Card CreateNewInstance(CardContext cardContext)
     {
         Card newCard = base.CreateNewInstance();
-        newCard.Init(counter++);
+
+        newCard.Init(cardContext);
+        newCard.GetComponent<MeshRenderer>().material.color = cardContext.GetColor();
 
         return newCard;
 

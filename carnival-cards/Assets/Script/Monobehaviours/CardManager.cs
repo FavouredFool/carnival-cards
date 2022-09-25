@@ -58,7 +58,8 @@ public class CardManager : MonoBehaviour
 
     public Card CreateCard()
     {
-        return _cardFactory.CreateNewInstance();
+        CardContext cardContext = ExampleCardContexts.GetCardContext();
+        return _cardFactory.CreateNewInstance(cardContext);
     }
 
     public Pile SplitPileInHalf(Pile pile)

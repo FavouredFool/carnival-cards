@@ -6,7 +6,7 @@ public class Card : MonoBehaviour
 {
     private Pile _pile;
 
-    private int _cardLabel;
+    private CardContext _cardContext;
 
 
     public void Awake()
@@ -14,14 +14,9 @@ public class Card : MonoBehaviour
         _pile = null;
     }
 
-    public void Init(int cardLabel)
+    public void Init(CardContext cardContext)
     {
-        _cardLabel = cardLabel;
-    }
-
-    public int GetCardLabel()
-    {
-        return _cardLabel;
+        _cardContext = cardContext;
     }
 
     public void SetPile(Pile pile)
@@ -32,5 +27,10 @@ public class Card : MonoBehaviour
     public Pile GetPile()
     {
         return _pile;
+    }
+
+    public string GetCardLabel()
+    {
+        return _cardContext.GetCardLabel();
     }
 }
