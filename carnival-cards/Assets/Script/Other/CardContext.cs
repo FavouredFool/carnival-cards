@@ -5,9 +5,9 @@ using static CardTypeManager;
 
 public class CardContext
 {
-    private string _name;
-    private int _number;
-    private CardType _cardType;
+    private readonly string _name;
+    private readonly int _number;
+    private readonly CardType _cardType;
 
     public CardContext(string name, int number, CardType cardType)
     {

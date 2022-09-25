@@ -10,9 +10,14 @@ public class InputManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.S))
         {
-            Pile newPile = _cardlikeManager.CreateCardAndPile();
-            _cardlikeManager.MovePileRandom(newPile);
+            Pile newPile = _cardlikeManager.CreatePile();
 
+            for (int i = ExampleCardContexts.GetTotalCards() - 1; i >= 0; i--)
+            {
+                _cardlikeManager.CreateCardAddToPile(newPile);
+            }
+
+            _cardlikeManager.MovePileRandom(newPile);
         }
         else if (Input.GetKeyDown(KeyCode.A))
         {
