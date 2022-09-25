@@ -96,11 +96,10 @@ public class CardManager : MonoBehaviour
         List<Card> currentPileCards = pile.GetCardList();
         List<Card> newCards = currentPileCards.GetRange(index, cardCount);
 
-        // Prune old List
-        //pile.ClearCardList();
-        pile.AddCardList(currentPileCards.Except(newCards).ToList());
+        List<Card> remainingCardList = currentPileCards.Except(newCards).ToList();
 
-        //pile.DeleteIfEmpty();
+        pile.ClearCardList();
+        pile.AddCardList(remainingCardList);
 
         // Create new Pile
         Pile newPile = CreatePileWithCards(newCards);
@@ -130,6 +129,19 @@ public class CardManager : MonoBehaviour
 
     public List<Pile> GetAllPiles()
     {
+        // Remove Empty Piles when necessary
+
+        List<Pile> pileListCopy = new(_pileList);
+
+        foreach (Pile pile in pileListCopy)
+        {
+            if (pile.GetCardList().Count <= 0)
+            {
+                _pileList.Remove(pile);
+                Destroy(pile.gameObject);
+            }
+        }
+
         return _pileList;
     }
 }
