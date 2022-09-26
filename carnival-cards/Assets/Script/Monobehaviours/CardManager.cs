@@ -8,11 +8,21 @@ public class CardManager : MonoBehaviour
     public PileFactory _pileFactory;
     public CardFactory _cardFactory;
 
-    protected List<Pile> _pileList;
+    protected List<Pile> _pileList = new();
 
-    public void Start()
+    private void Update()
     {
-        _pileList = new();
+        // how bad is this? -> Iterating through every card of every pile per frame. pretty bad.
+        List<Pile> pileListCopy = new(_pileList);
+        foreach (Pile pile in pileListCopy)
+        {
+            if (pile.GetCardList().Count <= 0)
+            {
+                RemovePileFromList(pile);
+                Destroy(pile.gameObject);
+            }
+        }
+
     }
 
     /*
@@ -39,6 +49,7 @@ public class CardManager : MonoBehaviour
     }
     */
 
+    #region Create Stuff
     public Pile CreatePileWithCards(List<Card> cardList)
     {
         Pile newPile = CreatePile();
@@ -58,13 +69,43 @@ public class CardManager : MonoBehaviour
         AddPileToList(newPile);
         return newPile;
     }
-
     public Card CreateCard()
     {
         CardContext cardContext = ExampleCardContexts.GetCardContext();
         return _cardFactory.CreateNewInstance(cardContext);
     }
+    #endregion
 
+    #region Move Piles
+    public void MovePile(Pile pile, Vector2 newPosition)
+    {
+        pile.transform.position = new Vector3(newPosition.x, pile.transform.position.y, newPosition.y);
+    }
+
+    public void MovePileRandom(Pile pile)
+    {
+        MovePile(pile, Random.insideUnitCircle * 3);
+    }
+    #endregion
+
+    #region PileList
+    public void AddPileToList(Pile pile)
+    {
+        _pileList.Add(pile);
+    }
+
+    public void RemovePileFromList(Pile pile)
+    {
+        _pileList.Remove(pile);
+    }
+
+    public List<Pile> GetAllPiles()
+    {
+        return _pileList;
+    }
+    #endregion
+
+    #region SplitOperation
     public Pile SplitPileInHalf(Pile pile)
     {
         return SplitPileAtRange(pile, Mathf.CeilToInt(pile.GetCardList().Count / 2f), Mathf.FloorToInt(pile.GetCardList().Count / 2f));
@@ -80,56 +121,15 @@ public class CardManager : MonoBehaviour
 
         List<Card> remainingCardList = currentPileCards.Except(newCards).ToList();
 
-        pile.GetCardList().Clear();
-        pile.AddCardListAtIndex(remainingCardList, pile.GetCardList().Count);
+        //pile.GetCardList().Clear();
+        //pile.AddCardListAtIndex(remainingCardList, pile.GetCardList().Count);
+        pile.RemoveCardList(newCards);
 
         // Create new Pile
         Pile newPile = CreatePileWithCards(newCards);
 
-        // Update their visual
-        pile.SynchronizeVisual();
-        newPile.SynchronizeVisual();
-
         return newPile;
     }
+    #endregion
 
-    public void MovePile(Pile pile, Vector2 newPosition)
-    {
-        pile.transform.position = new Vector3(newPosition.x, pile.transform.position.y, newPosition.y);
-    }
-
-    public void MovePileRandom(Pile pile)
-    {
-        MovePile(pile, Random.insideUnitCircle * 3);
-    }
-
-    public void AddPileToList(Pile pile)
-    {
-        _pileList.Add(pile);
-    }
-
-    public void RemovePileFromList(Pile pile)
-    {
-        _pileList.Remove(pile);
-    }
-
-    public List<Pile> GetAllPiles()
-    {
-        // Remove Empty Piles when necessary
-
-        List<Pile> pileListCopy = new(_pileList);
-
-        // TURN THIS INTO AN OBSERVER
-
-        foreach (Pile pile in pileListCopy)
-        {
-            if (pile.GetCardList().Count <= 0)
-            {
-                RemovePileFromList(pile);
-                Destroy(pile.gameObject);
-            }
-        }
-
-        return _pileList;
-    }
 }
