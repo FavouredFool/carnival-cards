@@ -362,7 +362,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh50980
+  m_Name: pb_Mesh27138
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
@@ -1062,7 +1062,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ea8c6d231f0d244a8a770d0969211ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cardlikeManager: {fileID: 997099337}
+  _cardManager: {fileID: 997099337}
 --- !u!4 &2069554235
 Transform:
   m_ObjectHideFlags: 0

@@ -11,10 +11,14 @@ public class Pile : MonoBehaviour
         _cardList = new List<Card>();
     }
 
-    public void Update()
+    public void SynchronizeVisual()
     {
-        // TURN THIS INTO OBSERVER
-        RecalculateTransformForAllCards();
+        for (int i = 0; i < _cardList.Count; i++)
+        {
+            _cardList[i].transform.parent = transform;
+            _cardList[i].transform.localPosition = new Vector3(0f, 0.005f, 0f) * (_cardList.IndexOf(_cardList[i]));
+            _cardList[i].transform.localRotation = Quaternion.identity;
+        }
 
         if (_cardList.Count <= 0)
         {
@@ -24,30 +28,56 @@ public class Pile : MonoBehaviour
 
     public void AddCardOnTop(Card card)
     {
-        _cardList.Add(card);
+        AddCardAtIndex(card, GetCardList().Count); 
     }
 
-    public void AddPile(Pile pile)
+    public void AddCardAtIndex(Card card, int index)
+    {
+        if (index == GetCardList().Count)
+        {
+            _cardList.Add(card);
+        } 
+        else
+        {
+            _cardList.Insert(index, card);
+        }
+
+        SynchronizeVisual();
+    }
+
+    public void RemoveCardAtIndex(Card card, int index)
+    {
+        _cardList.RemoveAt(index);
+
+        SynchronizeVisual();
+    }
+
+    public void RemoveCard(Card card)
+    {
+        _cardList.Remove(card);
+    }
+
+    public void AddPileAtIndex(Pile pile, int index)
     {
         List<Card> cardListCopy = new List<Card>(pile.GetCardList());
-        AddCardList(cardListCopy);
+        AddCardListAtIndex(cardListCopy, index);
     }
 
-    public void AddCardList(List<Card> cardList)
+    public void AddCardListAtIndex(List<Card> cardList, int index)
     {
+        cardList.Reverse();
+
         foreach (Card card in cardList)
         {
-            AddCardOnTop(card);
+            AddCardAtIndex(card, index);
         }
     }
 
-    public void RecalculateTransformForAllCards()
+    public void RemoveCardList(List<Card> cardList)
     {
-        for (int i = 0; i < _cardList.Count; i++)
+        foreach(Card card in cardList)
         {
-            _cardList[i].transform.parent = transform;
-            _cardList[i].transform.localPosition = new Vector3(0f, 0.005f, 0f) * (_cardList.IndexOf(_cardList[i]));
-            _cardList[i].transform.localRotation = Quaternion.identity;
+            RemoveCard(card);
         }
     }
 

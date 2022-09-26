@@ -15,6 +15,7 @@ public class CardManager : MonoBehaviour
         _pileList = new();
     }
 
+    /*
     public void AddPileToPile(Pile pileToAdd, Pile pileBase)
     {
         pileBase.AddPile(pileToAdd);
@@ -28,6 +29,7 @@ public class CardManager : MonoBehaviour
 
         return CreatePileWithCard(newCard);
     }
+    
 
     public Pile CreatePileWithCard(Card firstCard)
     {
@@ -35,11 +37,12 @@ public class CardManager : MonoBehaviour
         newPile.AddCardOnTop(firstCard);
         return newPile;
     }
+    */
 
     public Pile CreatePileWithCards(List<Card> cardList)
     {
         Pile newPile = CreatePile();
-        newPile.AddCardList(cardList);
+        newPile.AddCardListAtIndex(cardList, 0);
         return newPile;
     }
 
@@ -64,28 +67,7 @@ public class CardManager : MonoBehaviour
 
     public Pile SplitPileInHalf(Pile pile)
     {
-        return SplitPileAtIndex(pile, Mathf.CeilToInt(pile.GetCardList().Count / 2f));
-    }
-
-    public Pile SplitPileAtIndex(Pile pile, int index)
-    {
-        if (pile.GetCardList().Count < 2)
-        {
-            return pile;
-        }
-
-        Pile newPile = CreatePile();
-        List<Card> pileCards = pile.GetCardList();
-
-        for (int i = pileCards.Count - 1; i >= index; i--)
-        {
-            newPile.AddCardOnTop(pileCards[i]);
-            pileCards.RemoveAt(i);
-        }
-
-        newPile.GetCardList().Reverse();
-
-        return newPile;
+        return SplitPileAtRange(pile, Mathf.CeilToInt(pile.GetCardList().Count / 2f), Mathf.FloorToInt(pile.GetCardList().Count / 2f));
     }
 
     public Pile SplitPileAtRange(Pile pile, int index, int cardCount)
@@ -99,10 +81,14 @@ public class CardManager : MonoBehaviour
         List<Card> remainingCardList = currentPileCards.Except(newCards).ToList();
 
         pile.GetCardList().Clear();
-        pile.AddCardList(remainingCardList);
+        pile.AddCardListAtIndex(remainingCardList, pile.GetCardList().Count);
 
         // Create new Pile
         Pile newPile = CreatePileWithCards(newCards);
+
+        // Update their visual
+        pile.SynchronizeVisual();
+        newPile.SynchronizeVisual();
 
         return newPile;
     }
@@ -133,11 +119,13 @@ public class CardManager : MonoBehaviour
 
         List<Pile> pileListCopy = new(_pileList);
 
+        // TURN THIS INTO AN OBSERVER
+
         foreach (Pile pile in pileListCopy)
         {
             if (pile.GetCardList().Count <= 0)
             {
-                _pileList.Remove(pile);
+                RemovePileFromList(pile);
                 Destroy(pile.gameObject);
             }
         }
