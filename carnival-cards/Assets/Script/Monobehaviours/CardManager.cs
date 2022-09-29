@@ -22,32 +22,7 @@ public class CardManager : MonoBehaviour
                 Destroy(pile.gameObject);
             }
         }
-
     }
-
-    /*
-    public void AddPileToPile(Pile pileToAdd, Pile pileBase)
-    {
-        pileBase.AddPile(pileToAdd);
-        RemovePileFromList(pileToAdd);
-        Destroy(pileToAdd.gameObject);
-    }
-
-    public Pile CreateCardAndPile()
-    {
-        Card newCard = CreateCard();
-
-        return CreatePileWithCard(newCard);
-    }
-    
-
-    public Pile CreatePileWithCard(Card firstCard)
-    {
-        Pile newPile = CreatePile();
-        newPile.AddCardOnTop(firstCard);
-        return newPile;
-    }
-    */
 
     #region Create Stuff
     public Pile CreatePileWithCards(List<Card> cardList)
@@ -129,6 +104,14 @@ public class CardManager : MonoBehaviour
         Pile newPile = CreatePileWithCards(newCards);
 
         return newPile;
+    }
+    #endregion
+
+    #region Add Piles
+    public void AddPileToPileAtIndex(Pile pileToAdd, Pile pileBase, int index)
+    {
+        pileBase.AddCardListAtIndex(pileToAdd.GetCardList(), index);
+        pileToAdd.RemoveAllCards();
     }
     #endregion
 

@@ -7,11 +7,11 @@ public static class ExampleCardContexts
 {
     private static List<CardContext> _cardContexts = new()
     {
-        new CardContext("The Cover", 0, CardType.COVER),
-        new CardContext("Story", 1, CardType.STORY),
-        new CardContext("More Story", 2, CardType.STORY),
-        new CardContext("Even more Story", 3, CardType.STORY),
-        new CardContext("Some Place", 4, CardType.PLACE),
+        new CardContext("The Surrounding Room", 0, CardType.PLACE),
+        new CardContext("Subroom1", 1, CardType.PLACE),
+        new CardContext("Subroom2", 2, CardType.PLACE),
+        new CardContext("Subroom3", 3, CardType.PLACE),
+        new CardContext("Subroom4", 4, CardType.PLACE),
     };
 
     private static int _counter = _cardContexts.Count - 1;

@@ -25,35 +25,7 @@ public class InputManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.S))
-        {
-            CreateCompleteDeck();
-        }
-        else if (Input.GetKeyDown(KeyCode.A))
-        {
-            List<Pile> pileListCopy = new List<Pile>(_cardManager.GetAllPiles());
-
-            foreach (Pile pile in pileListCopy)
-            {
-                _cardManager.CreateCardAddToPile(pile);
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.D))
-        {
-            List<Pile> pileListCopy = new List<Pile>(_cardManager.GetAllPiles());
-
-            foreach (Pile pile in pileListCopy)
-            {
-                Pile newPile = _cardManager.SplitPileInHalf(pile);
-
-                if (newPile != pile)
-                {
-                    _cardManager.MovePileRandom(newPile);
-                }
-                
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.Q))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             List<Pile> pileListCopy = new List<Pile>(_cardManager.GetAllPiles());
 
@@ -66,6 +38,20 @@ public class InputManager : MonoBehaviour
                     _cardManager.MovePileRandom(newPile);
                 }
 
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.E))
+        {
+            List<Pile> pileListCopy = new List<Pile>(_cardManager.GetAllPiles());
+
+            if (pileListCopy.Count <= 1)
+            {
+                return;
+            }
+
+            for (int i = 1; i < pileListCopy.Count; i++)
+            {
+                _cardManager.AddPileToPileAtIndex(pileListCopy[i], pileListCopy[0], 1);
             }
         }
     }

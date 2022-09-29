@@ -70,7 +70,11 @@ public class Pile : MonoBehaviour
     public void RemoveCard(Card card)
     {
         _cardList.Remove(card);
-        SynchronizeVisual();
+    }
+
+    public void RemoveAllCards()
+    {
+        _cardList.Clear();
     }
 
     public void RemoveCardList(List<Card> cardList)
