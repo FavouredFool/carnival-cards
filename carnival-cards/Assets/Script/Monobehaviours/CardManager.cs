@@ -20,12 +20,25 @@ public class CardManager : MonoBehaviour
 
         Pile newPile = CreatePile();
 
-
-        CreateCardAddToPile(newPile);
         
+        // GetCardContext
+        CardContext rootCardContext = jsonReader.ReadJsonForCardContext(_jsonText);
 
+        CreateAndAddRecursive(rootCardContext, newPile);
+        
         MovePileRandom(newPile);
 
+    }
+
+    private void CreateAndAddRecursive(CardContext cardContext, Pile pile)
+    {
+        foreach(CardContext activeCardContext in cardContext.referencedCards)
+        {
+            CreateAndAddRecursive(activeCardContext, pile);
+        }
+
+        CreateCardAddToPile(pile, cardContext);
+        Debug.Log(cardContext.name);
     }
 
     private void Update()
@@ -50,9 +63,9 @@ public class CardManager : MonoBehaviour
         return newPile;
     }
 
-    public void CreateCardAddToPile(Pile pile)
+    public void CreateCardAddToPile(Pile pile, CardContext cardContext)
     {
-        Card newCard = CreateCard();
+        Card newCard = CreateCard(cardContext);
         pile.AddCardOnTop(newCard);
     }
 
@@ -62,13 +75,9 @@ public class CardManager : MonoBehaviour
         AddPileToList(newPile);
         return newPile;
     }
-    public Card CreateCard()
+    public Card CreateCard(CardContext cardContext)
     {
-        // GetCardContext
-        CardContext uppermostCardContext = jsonReader.ReadJsonForCardContext(_jsonText);
-
-
-        return _cardFactory.CreateNewInstance(uppermostCardContext);
+        return _cardFactory.CreateNewInstance(cardContext);
     }
     #endregion
 

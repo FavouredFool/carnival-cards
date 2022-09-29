@@ -953,6 +953,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50bf41edea69ad14a9ea9330653774a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _jsonText: {fileID: 4900000, guid: e697fc44cc17995448fe2aa36844ed67, type: 3}
   _pileFactory: {fileID: 717206646}
   _cardFactory: {fileID: 717206645}
 --- !u!850595691 &1942695381
@@ -1049,6 +1050,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _cardManager: {fileID: 997099337}
   _camera: {fileID: 330585545}
+  textJSON: {fileID: 4900000, guid: e697fc44cc17995448fe2aa36844ed67, type: 3}
 --- !u!4 &2069554235
 Transform:
   m_ObjectHideFlags: 0
