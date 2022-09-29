@@ -10,6 +10,7 @@ public class CardFactory : GenericFactory<Card>
         Card newCard = base.CreateNewInstance();
 
         newCard.Init(cardContext);
+        cardContext.SetCard(newCard);
         newCard.GetComponent<MeshRenderer>().material.color = cardContext.GetColor();
 
         return newCard;

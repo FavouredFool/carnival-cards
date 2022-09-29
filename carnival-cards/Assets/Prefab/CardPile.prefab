@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8448587631588894252}
   - component: {fileID: 7027606352630140602}
+  - component: {fileID: 4718913688328103214}
   m_Layer: 0
   m_Name: CardPile
   m_TagString: Untagged
@@ -44,3 +45,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 743b7c48951a5e04fae99a12b006e2ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!65 &4718913688328103214
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8492275688627709227}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.1, z: 1.4194}
+  m_Center: {x: 0, y: 0.05, z: 0}

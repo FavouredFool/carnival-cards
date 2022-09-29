@@ -1,33 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using static CardTypeManager;
+
 
 public class CardContext
 {
-    private readonly string _name;
-    private readonly int _number;
-    private readonly CardType _cardType;
+    private Card _card;
 
-    public CardContext(string name, int number, CardType cardType)
+    public string name { get; set; }
+    public List<CardContext> referencedCards { get; set; }
+
+    [JsonConverter(typeof(StringEnumConverter))]
+    public CardType type { get; set; }
+
+    public void SetCard(Card card)
     {
-        _name = name;
-        _number = number;
-        _cardType = cardType;
+        _card = card;
+    }
+
+    public Card GetCard()
+    {
+        return _card;
     }
 
     public string GetCardLabel()
     {
-        return _name + "\n" + _number;
-    }
-
-    public CardType GetCardType()
-    {
-        return _cardType;
+        return name;
     }
 
     public Color GetColor()
     {
-        return GetColorFromCardType(_cardType);
+        return GetColorFromCardType(type);
     }
 }

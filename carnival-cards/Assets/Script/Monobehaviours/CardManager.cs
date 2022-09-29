@@ -5,10 +5,28 @@ using System.Linq;
 
 public class CardManager : MonoBehaviour
 {
+    public TextAsset _jsonText;
+
     public PileFactory _pileFactory;
     public CardFactory _cardFactory;
 
-    protected List<Pile> _pileList = new();
+    private List<Pile> _pileList = new();
+
+    private JsonReader jsonReader;
+
+    private void Start()
+    {
+        jsonReader = new JsonReader();
+
+        Pile newPile = CreatePile();
+
+
+        CreateCardAddToPile(newPile);
+        
+
+        MovePileRandom(newPile);
+
+    }
 
     private void Update()
     {
@@ -46,8 +64,11 @@ public class CardManager : MonoBehaviour
     }
     public Card CreateCard()
     {
-        CardContext cardContext = ExampleCardContexts.GetCardContext();
-        return _cardFactory.CreateNewInstance(cardContext);
+        // GetCardContext
+        CardContext uppermostCardContext = jsonReader.ReadJsonForCardContext(_jsonText);
+
+
+        return _cardFactory.CreateNewInstance(uppermostCardContext);
     }
     #endregion
 

@@ -12,8 +12,6 @@ GameObject:
   - component: {fileID: 1384254843978290191}
   - component: {fileID: 1384254843978290184}
   - component: {fileID: 1384254843978290185}
-  - component: {fileID: 1384254843978290186}
-  - component: {fileID: 1384254843978290187}
   - component: {fileID: 1233431667175397903}
   m_Layer: 0
   m_Name: Card
@@ -324,28 +322,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!33 &1384254843978290186
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1384254843978290180}
-  m_Mesh: {fileID: 0}
---- !u!64 &1384254843978290187
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1384254843978290180}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 0}
 --- !u!114 &1233431667175397903
 MonoBehaviour:
   m_ObjectHideFlags: 0
