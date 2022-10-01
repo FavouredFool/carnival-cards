@@ -17,32 +17,35 @@ public class CardManager : MonoBehaviour
     private void Start()
     {
         jsonReader = new JsonReader();
-
-        Pile newPile = CreatePile();
-
         
-        // GetCardContext
         CardContext rootCardContext = jsonReader.ReadJsonForCardContext(_jsonText);
 
-        CreateAndAddRecursive(rootCardContext, newPile);
-        
-        MovePileRandom(newPile);
+        Card card = CreateAndAddCardsRecursive(null, rootCardContext, null);
 
+        MoveCardRandom(card);
     }
 
-    private void CreateAndAddRecursive(CardContext cardContext, Pile pile)
+    private Card CreateAndAddCardsRecursive(Card parentCard, CardContext cardContext, CardContext parentCardContext)
     {
-        foreach(CardContext activeCardContext in cardContext.referencedCards)
+        cardContext.ParentCardContext = parentCardContext;
+
+        Card card = CreateCardAddToCard(parentCard, cardContext);
+
+        List<Card> childCards = new();
+        for (int i = 0; i < cardContext.ReferencedCardContexts.Count; i++)
         {
-            CreateAndAddRecursive(activeCardContext, pile);
+            childCards.Add(CreateAndAddCardsRecursive(card, cardContext.ReferencedCardContexts[i], cardContext));
         }
 
-        CreateCardAddToPile(pile, cardContext);
-        Debug.Log(cardContext.name);
+        card.SetChildCards(childCards);
+
+        return card;
+        
     }
 
     private void Update()
     {
+        /*
         // how bad is this? -> Iterating through every card of every pile per frame. pretty bad.
         List<Pile> pileListCopy = new(_pileList);
         foreach (Pile pile in pileListCopy)
@@ -53,7 +56,10 @@ public class CardManager : MonoBehaviour
                 Destroy(pile.gameObject);
             }
         }
+        */
     }
+
+
 
     #region Create Stuff
     public Pile CreatePileWithCards(List<Card> cardList)
@@ -63,10 +69,26 @@ public class CardManager : MonoBehaviour
         return newPile;
     }
 
-    public void CreateCardAddToPile(Pile pile, CardContext cardContext)
+    public Card CreateCardAddToPile(Pile pile, CardContext cardContext)
     {
         Card newCard = CreateCard(cardContext);
         pile.AddCardOnTop(newCard);
+        return newCard;
+    }
+
+    public Card CreateCardAddToCard(Card parentCard, CardContext cardContext)
+    {
+        Card newCard = CreateCard(cardContext);
+
+        if (parentCard != null)
+        {
+            newCard.SetParentCard(parentCard);
+        }
+        
+
+        // TODO: HEIGHT SETZEN
+        //newCard.transform.localPosition = new Vector3(0, 0.05f * index, 0);
+        return newCard;
     }
 
     public Pile CreatePile()
@@ -81,15 +103,15 @@ public class CardManager : MonoBehaviour
     }
     #endregion
 
-    #region Move Piles
-    public void MovePile(Pile pile, Vector2 newPosition)
+    #region Move Card
+    public void MoveCard(Card card, Vector2 newPosition)
     {
-        pile.transform.position = new Vector3(newPosition.x, pile.transform.position.y, newPosition.y);
+        card.transform.position = new Vector3(newPosition.x, card.transform.position.y, newPosition.y);
     }
 
-    public void MovePileRandom(Pile pile)
+    public void MoveCardRandom(Card card)
     {
-        MovePile(pile, Random.insideUnitCircle * 3);
+        MoveCard(card, Random.insideUnitCircle * 3);
     }
     #endregion
 
@@ -136,6 +158,7 @@ public class CardManager : MonoBehaviour
         return newPile;
     }
     #endregion
+
 
     #region Add Piles
     public void AddPileToPileAtIndex(Pile pileToAdd, Pile pileBase, int index)

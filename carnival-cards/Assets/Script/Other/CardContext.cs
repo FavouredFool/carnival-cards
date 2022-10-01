@@ -10,11 +10,13 @@ public class CardContext
 {
     private Card _card;
 
-    public string name { get; set; }
-    public List<CardContext> referencedCards { get; set; }
+    public CardContext ParentCardContext { get; set; }
+
+    public string Name { get; set; }
+    public List<CardContext> ReferencedCardContexts { get; set; }
 
     [JsonConverter(typeof(StringEnumConverter))]
-    public CardType type { get; set; }
+    public CardType Type { get; set; }
 
     public void SetCard(Card card)
     {
@@ -28,11 +30,23 @@ public class CardContext
 
     public string GetCardLabel()
     {
-        return name;
+        return Name;
     }
 
     public Color GetColor()
     {
-        return GetColorFromCardType(type);
+        return GetColorFromCardType(Type);
+    }
+
+    public CardContext GetRootCardContext()
+    {
+        CardContext parentContext = ParentCardContext;
+
+        while (parentContext.ParentCardContext != null)
+        {
+            parentContext = parentContext.ParentCardContext;
+        }
+
+        return parentContext;
     }
 }

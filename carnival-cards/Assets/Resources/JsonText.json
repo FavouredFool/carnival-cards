@@ -1,26 +1,26 @@
 {
     "name": "Entryway",
     "type": "PLACE",
-    "referencedCards": [
+    "referencedCardContexts": [
         {
             "name": "Dining Room",
             "type": "PLACE",
-            "referencedCards": [
+            "referencedCardContexts": [
                 {
                     "name": "Kitchen",
                     "type": "PLACE",
-                    "referencedCards": [
+                    "referencedCardContexts": [
                         {
                             "name": "Pantry",
                             "type": "PLACE",
-                            "referencedCards": []
+                            "referencedCardContexts": []
                         }
                     ]
                 },
                 {
                     "name": "Garden",
                     "type": "PLACE",
-                    "referencedCards": []
+                    "referencedCardContexts": []
                 }
             ]
         }

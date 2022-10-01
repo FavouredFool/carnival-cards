@@ -8,6 +8,7 @@ public class CardFactory : GenericFactory<Card>
     public Card CreateNewInstance(CardContext cardContext)
     {
         Card newCard = base.CreateNewInstance();
+        newCard.name = cardContext.Name;
 
         newCard.Init(cardContext);
         cardContext.SetCard(newCard);

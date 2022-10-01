@@ -25,7 +25,6 @@ public class InputManager : MonoBehaviour
 
     private Pile GetPileFromMouseClick()
     {
-        // MOUSE POS
         Ray shotRay = _camera.ScreenPointToRay(Input.mousePosition);
 
         RaycastHit hit;
@@ -40,49 +39,55 @@ public class InputManager : MonoBehaviour
         return null;
     }
 
+    private Card GetCardFromMouseClick()
+    {
+        Ray shotRay = _camera.ScreenPointToRay(Input.mousePosition);
+
+        RaycastHit hit;
+        if (Physics.Raycast(shotRay, out hit))
+        {
+            if (hit.collider != null)
+            {
+                Card hitCard = hit.collider.GetComponent<Card>();
+                return hitCard.GetRootCard();
+            }
+        }
+
+        return null;
+    }
+
+    private void DisplayReferencedCards(Card card)
+    {
+        List<Card> childCardsCopy = new(card.GetChildCards());
+
+        foreach (Card activeCard in childCardsCopy)
+        {
+            activeCard.GetParentCard().GetChildCards().Remove(activeCard);
+            activeCard.SetParentCard(null);
+
+            _cardManager.MoveCardRandom(activeCard);
+        }
+    }
+
+
     void Update()
     {
 
         if (Input.GetMouseButtonDown(0))
         {
-            Pile foundPile = GetPileFromMouseClick();
-
-            if (!foundPile)
-            {
-                return;
-            }
-
-            Debug.Log("clicked Pile");
+            FindCardFromClick();
         }
-        
-        if (Input.GetKeyDown(KeyCode.Q))
+    }
+
+    private void FindCardFromClick()
+    {
+        Card foundCard = GetCardFromMouseClick();
+
+        if (!foundCard)
         {
-            List<Pile> pileListCopy = new List<Pile>(_cardManager.GetAllPiles());
-
-            foreach (Pile pile in pileListCopy)
-            {
-                Pile newPile = _cardManager.SplitPileAtRange(pile, 0, 1);
-
-                if (newPile != pile)
-                {
-                    _cardManager.MovePileRandom(newPile);
-                }
-
-            }
+            return;
         }
-        else if (Input.GetKeyDown(KeyCode.E))
-        {
-            List<Pile> pileListCopy = new List<Pile>(_cardManager.GetAllPiles());
-
-            if (pileListCopy.Count <= 1)
-            {
-                return;
-            }
-
-            for (int i = 1; i < pileListCopy.Count; i++)
-            {
-                _cardManager.AddPileToPileAtIndex(pileListCopy[i], pileListCopy[0], 1);
-            }
-        }
+        Debug.Log(foundCard.GetCardContext().Name);
+        DisplayReferencedCards(foundCard);
     }
 }
