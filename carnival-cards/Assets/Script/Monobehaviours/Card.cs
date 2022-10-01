@@ -26,12 +26,53 @@ public class Card : MonoBehaviour
         if (_parentCard != null)
         {
             transform.parent = _parentCard.transform;
-            transform.localPosition = Vector3.zero;
+            transform.localPosition = new Vector3(0, transform.localPosition.y, 0);
+            
         }
         else
         {
             transform.parent = null;
         }
+    }
+
+    public int GetCardAmount()
+    {
+        return AddCardAmountRecursive(0);
+    }
+
+    private int AddCardAmountRecursive(int counter)
+    {
+        counter += 1;
+        foreach (Card card in _childCards)
+        {
+            counter = card.AddCardAmountRecursive(counter);
+        }
+
+        return counter;
+    }
+
+    public void SynchronizeHeight()
+    {
+        int startHeight = GetCardAmount() - 1;
+        SetHeightRecursive(0);
+
+        // Hier alles nach oben verschieben
+        transform.position = new Vector3(transform.position.x, 0.005f * startHeight, transform.position.z);
+    }
+
+    private int SetHeightRecursive(int height)
+    {
+        transform.localPosition = new Vector3(transform.position.x, 0.005f * height, transform.position.z);
+       
+        height = 0;
+        foreach (Card card in _childCards)
+        {
+            
+            height += -1;
+            height += card.SetHeightRecursive(height);
+        }
+
+        return height;
     }
 
     public Card GetRootCard()

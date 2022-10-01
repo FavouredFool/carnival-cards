@@ -14,6 +14,8 @@ public class CardManager : MonoBehaviour
 
     private JsonReader jsonReader;
 
+    private Card topCard;
+
     private void Start()
     {
         jsonReader = new JsonReader();
@@ -22,7 +24,17 @@ public class CardManager : MonoBehaviour
 
         Card card = CreateAndAddCardsRecursive(null, rootCardContext, null);
 
+        //card.SynchronizeHeight();
+
+        topCard = card;
+
         MoveCardRandom(card);
+    }
+
+
+    private void Update()
+    {
+        topCard.SynchronizeHeight();
     }
 
     private Card CreateAndAddCardsRecursive(Card parentCard, CardContext cardContext, CardContext parentCardContext)
@@ -43,21 +55,6 @@ public class CardManager : MonoBehaviour
         
     }
 
-    private void Update()
-    {
-        /*
-        // how bad is this? -> Iterating through every card of every pile per frame. pretty bad.
-        List<Pile> pileListCopy = new(_pileList);
-        foreach (Pile pile in pileListCopy)
-        {
-            if (pile.GetCardList().Count <= 0)
-            {
-                RemovePileFromList(pile);
-                Destroy(pile.gameObject);
-            }
-        }
-        */
-    }
 
 
 

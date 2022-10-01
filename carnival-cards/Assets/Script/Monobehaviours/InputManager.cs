@@ -23,21 +23,6 @@ public class InputManager : MonoBehaviour
     }
     */
 
-    private Pile GetPileFromMouseClick()
-    {
-        Ray shotRay = _camera.ScreenPointToRay(Input.mousePosition);
-
-        RaycastHit hit;
-        if (Physics.Raycast(shotRay, out hit))
-        {
-            if (hit.collider != null)
-            {
-                return hit.collider.GetComponent<Pile>();
-            }
-        }
-
-        return null;
-    }
 
     private Card GetCardFromMouseClick()
     {
@@ -87,7 +72,7 @@ public class InputManager : MonoBehaviour
         {
             return;
         }
-        Debug.Log(foundCard.GetCardContext().Name);
+
         DisplayReferencedCards(foundCard);
     }
 }
