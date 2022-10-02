@@ -8,17 +8,21 @@ using static CardTypeManager;
 
 public class CardContext
 {
+    [JsonConverter(typeof(StringEnumConverter))]
+    public CardType Type { get; set; }
+
+    public string Name { get; set; }
+
+    public List<CardContext> ChildCardContexts { get; set; }
+
+
+
     private Card _card;
 
     private List<int> _identifier;
 
     private CardContext _parentContext;
 
-    public string Name { get; set; }
-    public List<CardContext> ReferencedCardContexts { get; set; }
-
-    [JsonConverter(typeof(StringEnumConverter))]
-    public CardType Type { get; set; }
 
     public void InitCardContextRecursive(CardContext parentCardContext, List<int> upperIdentifier, int index)
     {
@@ -29,9 +33,9 @@ public class CardContext
         identifier.Add(index);
         SetIdentifier(identifier);
 
-        for (int i = 0; i < ReferencedCardContexts.Count; i++)
+        for (int i = 0; i < ChildCardContexts.Count; i++)
         {
-            ReferencedCardContexts[i].InitCardContextRecursive(this, identifier, i);
+            ChildCardContexts[i].InitCardContextRecursive(this, identifier, i);
         }
 
     }
@@ -60,6 +64,18 @@ public class CardContext
         }
 
         return true;
+    }
+
+    public List<Card> GetListOfReferencedCards()
+    {
+        List<Card> listOfCards = new();
+
+        foreach (CardContext context in ChildCardContexts)
+        {
+            listOfCards.Add(context.GetCard());
+        }
+
+        return listOfCards;
     }
 
     public CardContext GetParentContext()
@@ -102,16 +118,6 @@ public class CardContext
         return GetColorFromCardType(Type);
     }
 
-    public List<Card> GetListOfReferencedCards()
-    {
-        List<Card> listOfCards = new();
 
-        foreach (CardContext context in ReferencedCardContexts)
-        {
-            listOfCards.Add(context.GetCard());
-        }
-
-        return listOfCards;
-    }
 
 }

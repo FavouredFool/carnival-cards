@@ -21,6 +21,57 @@ public class Card : MonoBehaviour
         _cardContext = cardContext;
     }
 
+    public void AttachCardAtEnd(Card cardToAttach)
+    {
+        if (!cardToAttach.GetCardContext().IsDeeperEqual(GetCardContext()))
+        {
+            Debug.Log("FEHLER: BASIS ZU TIEF");
+            return;
+        }
+
+        AttachCardRecursive(cardToAttach, GetCardContext().GetIdentifier().Count);
+
+    }
+
+    private void AttachCardRecursive(Card cardToAttach, int depth)
+    {
+        List<int> cardToAttachIdentifer = cardToAttach.GetCardContext().GetIdentifier();
+
+        if (cardToAttachIdentifer.Count == depth)
+        {
+            Debug.LogWarning("FEHLER: IDENTIFIER VORBEI");
+        }
+
+        CardContext context = GetCardContext();
+
+        for (int i = 0; i < context.ChildCardContexts.Count; i++)
+        {
+            if (context.ChildCardContexts[i].GetIdentifier()[depth] == cardToAttachIdentifer[depth])
+            {
+                //Found correct card, go deeper if identifier is not fully traversed
+
+                // Is this card child of parent? -> if not, attach
+                if (context.ChildCardContexts[i].GetCard().GetParentCard() != this)
+                {
+                    AttachCardDirectly(context.ChildCardContexts[i].GetCard());
+                    
+                } else
+                {
+                    context.ChildCardContexts[i].GetCard().AttachCardRecursive(cardToAttach, ++depth);
+                }
+
+                break;
+
+            }
+        }
+    }
+
+    private void AttachCardDirectly(Card cardToAttach)
+    {
+        cardToAttach.SetParentCard(this);
+        GetChildCards().Add(cardToAttach);
+    }
+
     public void SynchronizeVisual()
     {
         if (_parentCard != null)

@@ -362,7 +362,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh27138
+  m_Name: pb_Mesh27134
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
@@ -531,7 +531,6 @@ GameObject:
   m_Component:
   - component: {fileID: 717206644}
   - component: {fileID: 717206645}
-  - component: {fileID: 717206646}
   m_Layer: 0
   m_Name: CardFactory
   m_TagString: Untagged
@@ -567,19 +566,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   prefab: {fileID: 1233431667175397903, guid: 520db253f2574ad4291193b48c9b67bc, type: 3}
---- !u!114 &717206646
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 717206643}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ecbd702fa6cecef4ca54e9a189179695, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  prefab: {fileID: 7027606352630140602, guid: 19977e66cbb08964eb31db71d5465dff, type: 3}
 --- !u!1 &739326771
 GameObject:
   m_ObjectHideFlags: 0
@@ -954,7 +940,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _jsonText: {fileID: 4900000, guid: e697fc44cc17995448fe2aa36844ed67, type: 3}
-  _pileFactory: {fileID: 717206646}
   _cardFactory: {fileID: 717206645}
 --- !u!850595691 &1942695381
 LightingSettings:

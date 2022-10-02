@@ -1,32 +1,32 @@
 {
     "name": "Entryway",
     "type": "PLACE",
-    "referencedCardContexts": [
+    "childCardContexts": [
         {
             "name": "Dining Room",
             "type": "PLACE",
-            "referencedCardContexts": [
+            "childCardContexts": [
                 {
                     "name": "Kitchen",
                     "type": "PLACE",
-                    "referencedCardContexts": [
+                    "childCardContexts": [
                         {
                             "name": "Pantry",
                             "type": "PLACE",
-                            "referencedCardContexts": [
+                            "childCardContexts": [
                                 {
                                     "name": "Mousehole",
                                     "type": "PLACE",
-                                    "referencedCardContexts": [
+                                    "childCardContexts": [
                                         {
                                             "name": "Another Universe",
                                             "type": "PLACE", 
-                                            "referencedCardContexts": []
+                                            "childCardContexts": []
                                         },
                                         {
                                             "name": "Another Multiverse",
                                             "type": "PLACE",
-                                            "referencedCardContexts": []
+                                            "childCardContexts": []
                                         }
                                     ]
                                 }
@@ -37,14 +37,14 @@
                 {
                     "name": "Garden",
                     "type": "PLACE",
-                    "referencedCardContexts": []
+                    "childCardContexts": []
                 }
             ]
         },
         {
             "name": "Study",
             "type": "PLACE",
-            "referencedCardContexts": []
+            "childCardContexts": []
         }
     ]
 }

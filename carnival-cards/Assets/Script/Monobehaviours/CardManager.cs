@@ -13,15 +13,16 @@ public class CardManager : MonoBehaviour
 
     private JsonReader jsonReader;
 
+    private Vector2 _highlightPos = new Vector2(-5f, 0f);
+    private Vector2 _stepOutPos = new Vector2(-5f, 3f);
+
 
     private void Start()
     {
         jsonReader = new JsonReader();
         
         CardContext rootCardContext = jsonReader.ReadJsonForCardContext(_jsonText);
-
         rootCardContext.InitCardContextRecursive(null, new List<int>(), 0);
-
         Card card = CreateAndAddCardsRecursive(null, rootCardContext);
 
         _topCardList.Add(card);
@@ -34,9 +35,9 @@ public class CardManager : MonoBehaviour
         Card card = CreateCardAddToCard(parentCard, cardContext);
 
         List<Card> childCards = new();
-        for (int i = 0; i < cardContext.ReferencedCardContexts.Count; i++)
+        for (int i = 0; i < cardContext.ChildCardContexts.Count; i++)
         {
-            childCards.Add(CreateAndAddCardsRecursive(card, cardContext.ReferencedCardContexts[i]));
+            childCards.Add(CreateAndAddCardsRecursive(card, cardContext.ChildCardContexts[i]));
         }
 
         card.SetChildCards(childCards);
@@ -51,137 +52,103 @@ public class CardManager : MonoBehaviour
         {
             topCard.SynchronizeHeight();
         }
-
-
     }
+
+
 
     public void DisplayReferencedCards(Card card)
     {
         List<Card> childCardsCopy = new(card.GetChildCards());
+        CardContext greaterCardContext = card.GetCardContext().GetParentContext();
 
         foreach (Card activeCard in childCardsCopy)
         {
-            activeCard.GetParentCard().GetChildCards().Remove(activeCard);
-            activeCard.SetParentCard(null);
-            _topCardList.Add(activeCard);
+            DetachCard(activeCard);
         }
 
-        MoveCardToHighlightPos(card);
-
+        MoveCard(card, _highlightPos);
         FanOutCardListAtPos(card.GetCardContext().GetListOfReferencedCards());
 
-        if (card.GetCardContext().GetParentContext() != null)
+        if (greaterCardContext != null)
         {
-            AddSiblingsToParent(card);
+            AddSiblingsToGreaterCard(card, greaterCardContext);
+            MoveCard(greaterCardContext.GetCard(), _stepOutPos);
 
-            PutCardInStepOutPos(card.GetCardContext().GetParentContext().GetCard());
+            CardContext greaterGreaterCardContext = greaterCardContext.GetParentContext();
 
-            if (card.GetCardContext().GetParentContext().GetParentContext() != null)
+            if (greaterGreaterCardContext != null)
             {
-                // Add to discard Card
-                if (_discardCard == null)
-                {
-                    _discardCard = card.GetCardContext().GetParentContext().GetParentContext().GetCard();
-                }
-                else
-                {
-                    // 1. remove from topCard list
-                    // 2. Add newCard parent
-                    // 3. Add parentCard child
-                    Card addToDiscardCard = card.GetCardContext().GetParentContext().GetParentContext().GetCard();
-                    _topCardList.Remove(addToDiscardCard);
-                    addToDiscardCard.SetParentCard(_discardCard);
-                    _discardCard.GetChildCards().Add(addToDiscardCard);
-
-                }
+                AddToDiscardCard(greaterGreaterCardContext);
             }
 
-            //PutUnusedCardOnDiscardPos(MakeDiscardCard(card.GetCardContext().GetParentContext()));
         }
 
         if (_discardCard != null)
         {
             _discardCard.transform.position = new Vector3(5f, card.transform.position.y, 3f);
         }
-        
-
     }
 
-    public void AddSiblingsToParent(Card card)
+    public void AddToDiscardCard(CardContext greaterGreaterCardContext)
     {
-        foreach (Card sibling in card.GetCardContext().GetParentContext().GetListOfReferencedCards())
+        // Add to discard Card
+        if (_discardCard == null)
         {
-            if (sibling != card)
-            {
-                sibling.SetParentCard(card.GetCardContext().GetParentContext().GetCard());
-                card.GetCardContext().GetParentContext().GetCard().GetChildCards().Add(sibling);
-                _topCardList.Remove(sibling);
-            }
+            _discardCard = greaterGreaterCardContext.GetCard();
+        }
+        else
+        {
+            AttachCard(greaterGreaterCardContext.GetCard(), _discardCard);
         }
     }
 
-    public void MoveCardToHighlightPos(Card card)
+    public void AddSiblingsToGreaterCard(Card baseCard, CardContext greaterCardContext)
     {
-        card.transform.position = new Vector3(-5f, card.transform.position.y, 0f);
+        foreach (Card sibling in greaterCardContext.GetListOfReferencedCards())
+        {
+            if (sibling != baseCard)
+            {
+                AttachCard(sibling, greaterCardContext.GetCard());
+            }
+        }
     }
 
     public void FanOutCardListAtPos(List<Card> cardList)
     {
         for (int i = 0; i < cardList.Count; i++)
         {
-            cardList[i].transform.position = new Vector3(2f * i, cardList[i].transform.position.y, 0f);
+            MoveCard(cardList[i], new Vector2(2f * i, 0f));
         }
     }
 
-    public void PutCardInStepOutPos(Card card)
-    {
 
-        card.transform.position = new Vector3(-5f, card.transform.position.y, 3f);
+    #region Attach / Detach
+    public void DetachCard(Card cardToRemove)
+    {
+        cardToRemove.GetParentCard().GetChildCards().Remove(cardToRemove);
+        cardToRemove.SetParentCard(null);
+        _topCardList.Add(cardToRemove);
     }
-    
-    public Card MakeDiscardCard(CardContext excludeCardsWithDeeperContext)
-    {
-        List<Card> unusedCards = new();
 
-        foreach (Card card in _topCardList)
+    public void AttachCard(Card cardToAttach, Card baseCard)
+    {
+        if (!_topCardList.Contains(cardToAttach))
         {
-            // is this card being used on the field?
-            // if not, add it to unusedCards and sort these afterwards
-
-            if (!card.GetCardContext().IsDeeperEqual(excludeCardsWithDeeperContext))
-            {
-                // Add to List
-                unusedCards.Add(card);
-            }
+            Debug.LogWarning("FEHLER");
         }
 
-        return CombineCardListToCard(unusedCards);
+        // Find correct position in baseCard-Hierachie
+
+        Debug.Log("base: " + baseCard.name);
+        Debug.Log("attach: " + cardToAttach.name);
+
+        baseCard.AttachCardAtEnd(cardToAttach);
+
+        _topCardList.Remove(cardToAttach);
     }
 
-    public void SortCardListByContext(List<Card> cardList)
-    {
+    #endregion
 
-    }
-
-    public Card CombineCardListToCard(List<Card> cardList)
-    {
-        SortCardListByContext(cardList);
-
-
-        for (int i = 1; i < cardList.Count; i++)
-        {
-            //cardList[0].AddCard(cardList[i]);
-        }
-
-
-        return null;
-    }
-    
-
-    public void PutUnusedCardOnDiscardPos(Card discardCard)
-    {
-
-    }
 
     #region Create Stuff
 
