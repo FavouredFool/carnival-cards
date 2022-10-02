@@ -13,7 +13,24 @@
                         {
                             "name": "Pantry",
                             "type": "PLACE",
-                            "referencedCardContexts": []
+                            "referencedCardContexts": [
+                                {
+                                    "name": "Mousehole",
+                                    "type": "PLACE",
+                                    "referencedCardContexts": [
+                                        {
+                                            "name": "Another Universe",
+                                            "type": "PLACE", 
+                                            "referencedCardContexts": []
+                                        },
+                                        {
+                                            "name": "Another Multiverse",
+                                            "type": "PLACE",
+                                            "referencedCardContexts": []
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ]
                 },
@@ -23,6 +40,11 @@
                     "referencedCardContexts": []
                 }
             ]
+        },
+        {
+            "name": "Study",
+            "type": "PLACE",
+            "referencedCardContexts": []
         }
     ]
 }

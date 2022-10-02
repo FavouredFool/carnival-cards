@@ -36,6 +36,32 @@ public class CardContext
 
     }
 
+    public bool IsDeeperEqual(CardContext cardToCompare)
+    {
+        // wenn this deeper als cardToCompare -> true
+
+        if (this == cardToCompare)
+        {
+            return true;
+        }
+
+        for (int i = 0; i < cardToCompare.GetIdentifier().Count; i++)
+        {
+            if (GetIdentifier().Count == i)
+            {
+                return false;
+            }
+
+            if (cardToCompare.GetIdentifier()[i] != GetIdentifier()[i])
+            {
+                return false;
+            }
+
+        }
+
+        return true;
+    }
+
     public CardContext GetParentContext()
     {
         return _parentContext;

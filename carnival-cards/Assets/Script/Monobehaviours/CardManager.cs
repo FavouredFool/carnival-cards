@@ -12,6 +12,7 @@ public class CardManager : MonoBehaviour
 
     private List<Pile> _pileList = new();
     private List<Card> _topCardList = new();
+    private Card _discardCard = null;
 
     private JsonReader jsonReader;
 
@@ -74,18 +75,52 @@ public class CardManager : MonoBehaviour
 
         if (card.GetCardContext().GetParentContext() != null)
         {
+            AddSiblingsToParent(card);
+
             PutCardInStepOutPos(card.GetCardContext().GetParentContext().GetCard());
 
-            //PutUnusedCardOnDiscardPile(MakeDiscardCard(card.GetCardContext().ParentCardContext));
+            if (card.GetCardContext().GetParentContext().GetParentContext() != null)
+            {
+                // Add to discard Card
+                if (_discardCard == null)
+                {
+                    _discardCard = card.GetCardContext().GetParentContext().GetParentContext().GetCard();
+                }
+                else
+                {
+                    // 1. remove from topCard list
+                    // 2. Add newCard parent
+                    // 3. Add parentCard child
+                    Card addToDiscardCard = card.GetCardContext().GetParentContext().GetParentContext().GetCard();
+                    _topCardList.Remove(addToDiscardCard);
+                    addToDiscardCard.SetParentCard(_discardCard);
+                    _discardCard.GetChildCards().Add(addToDiscardCard);
+
+                }
+            }
+
+            //PutUnusedCardOnDiscardPos(MakeDiscardCard(card.GetCardContext().GetParentContext()));
         }
 
+        if (_discardCard != null)
+        {
+            _discardCard.transform.position = new Vector3(5f, card.transform.position.y, 3f);
+        }
         
 
+    }
 
-        
-        
-        
-
+    public void AddSiblingsToParent(Card card)
+    {
+        foreach (Card sibling in card.GetCardContext().GetParentContext().GetListOfReferencedCards())
+        {
+            if (sibling != card)
+            {
+                sibling.SetParentCard(card.GetCardContext().GetParentContext().GetCard());
+                card.GetCardContext().GetParentContext().GetCard().GetChildCards().Add(sibling);
+                _topCardList.Remove(sibling);
+            }
+        }
     }
 
     public void MoveCardToHighlightPos(Card card)
@@ -106,7 +141,7 @@ public class CardManager : MonoBehaviour
 
         card.transform.position = new Vector3(-5f, card.transform.position.y, 3f);
     }
-    /*
+    
     public Card MakeDiscardCard(CardContext excludeCardsWithDeeperContext)
     {
         List<Card> unusedCards = new();
@@ -116,14 +151,35 @@ public class CardManager : MonoBehaviour
             // is this card being used on the field?
             // if not, add it to unusedCards and sort these afterwards
 
-            if (card.GetCardContext().IsDeeperEqual(excludeCardsWithDeeperContext))
+            if (!card.GetCardContext().IsDeeperEqual(excludeCardsWithDeeperContext))
             {
-
+                // Add to List
+                unusedCards.Add(card);
             }
-
         }
+
+        return CombineCardListToCard(unusedCards);
     }
-    */
+
+    public void SortCardListByContext(List<Card> cardList)
+    {
+
+    }
+
+    public Card CombineCardListToCard(List<Card> cardList)
+    {
+        SortCardListByContext(cardList);
+
+
+        for (int i = 1; i < cardList.Count; i++)
+        {
+            //cardList[0].AddCard(cardList[i]);
+        }
+
+
+        return null;
+    }
+    
 
     public void PutUnusedCardOnDiscardPos(Card discardCard)
     {
