@@ -6,11 +6,8 @@ using System.Linq;
 public class CardManager : MonoBehaviour
 {
     public TextAsset _jsonText;
-
-    public PileFactory _pileFactory;
     public CardFactory _cardFactory;
 
-    private List<Pile> _pileList = new();
     private List<Card> _topCardList = new();
     private Card _discardCard = null;
 
@@ -187,19 +184,6 @@ public class CardManager : MonoBehaviour
     }
 
     #region Create Stuff
-    public Pile CreatePileWithCards(List<Card> cardList)
-    {
-        Pile newPile = CreatePile();
-        newPile.AddCardListAtIndex(cardList, 0);
-        return newPile;
-    }
-
-    public Card CreateCardAddToPile(Pile pile, CardContext cardContext)
-    {
-        Card newCard = CreateCard(cardContext);
-        pile.AddCardOnTop(newCard);
-        return newCard;
-    }
 
     public Card CreateCardAddToCard(Card parentCard, CardContext cardContext)
     {
@@ -216,12 +200,6 @@ public class CardManager : MonoBehaviour
         return newCard;
     }
 
-    public Pile CreatePile()
-    {
-        Pile newPile = _pileFactory.CreateNewInstance();
-        AddPileToList(newPile);
-        return newPile;
-    }
     public Card CreateCard(CardContext cardContext)
     {
         return _cardFactory.CreateNewInstance(cardContext);
@@ -240,57 +218,5 @@ public class CardManager : MonoBehaviour
     }
     #endregion
 
-    #region PileList
-    public void AddPileToList(Pile pile)
-    {
-        _pileList.Add(pile);
-    }
-
-    public void RemovePileFromList(Pile pile)
-    {
-        _pileList.Remove(pile);
-    }
-
-    public List<Pile> GetAllPiles()
-    {
-        return _pileList;
-    }
-    #endregion
-
-    #region SplitOperation
-    public Pile SplitPileInHalf(Pile pile)
-    {
-        return SplitPileAtRange(pile, Mathf.CeilToInt(pile.GetCardList().Count / 2f), Mathf.FloorToInt(pile.GetCardList().Count / 2f));
-    }
-
-    public Pile SplitPileAtRange(Pile pile, int index, int cardCount)
-    {
-        Debug.Assert(cardCount > 0);
-        Debug.Assert(0 <= index && index + cardCount - 1 < pile.GetCardList().Count);
-        
-        List<Card> currentPileCards = pile.GetCardList();
-        List<Card> newCards = currentPileCards.GetRange(index, cardCount);
-
-        List<Card> remainingCardList = currentPileCards.Except(newCards).ToList();
-
-        //pile.GetCardList().Clear();
-        //pile.AddCardListAtIndex(remainingCardList, pile.GetCardList().Count);
-        pile.RemoveCardList(newCards);
-
-        // Create new Pile
-        Pile newPile = CreatePileWithCards(newCards);
-
-        return newPile;
-    }
-    #endregion
-
-
-    #region Add Piles
-    public void AddPileToPileAtIndex(Pile pileToAdd, Pile pileBase, int index)
-    {
-        pileBase.AddCardListAtIndex(pileToAdd.GetCardList(), index);
-        pileToAdd.RemoveAllCards();
-    }
-    #endregion
 
 }
