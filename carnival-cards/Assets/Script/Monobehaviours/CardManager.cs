@@ -11,10 +11,10 @@ public class CardManager : MonoBehaviour
     public CardFactory _cardFactory;
 
     private List<Pile> _pileList = new();
+    private List<Card> _topCardList = new();
 
     private JsonReader jsonReader;
 
-    private Card topCard;
 
     private void Start()
     {
@@ -22,31 +22,23 @@ public class CardManager : MonoBehaviour
         
         CardContext rootCardContext = jsonReader.ReadJsonForCardContext(_jsonText);
 
-        Card card = CreateAndAddCardsRecursive(null, rootCardContext, null);
+        rootCardContext.InitCardContextRecursive(null, new List<int>(), 0);
 
-        //card.SynchronizeHeight();
+        Card card = CreateAndAddCardsRecursive(null, rootCardContext);
 
-        topCard = card;
+        _topCardList.Add(card);
 
-        MoveCardRandom(card);
     }
 
 
-    private void Update()
+    private Card CreateAndAddCardsRecursive(Card parentCard, CardContext cardContext)
     {
-        topCard.SynchronizeHeight();
-    }
-
-    private Card CreateAndAddCardsRecursive(Card parentCard, CardContext cardContext, CardContext parentCardContext)
-    {
-        cardContext.ParentCardContext = parentCardContext;
-
         Card card = CreateCardAddToCard(parentCard, cardContext);
 
         List<Card> childCards = new();
         for (int i = 0; i < cardContext.ReferencedCardContexts.Count; i++)
         {
-            childCards.Add(CreateAndAddCardsRecursive(card, cardContext.ReferencedCardContexts[i], cardContext));
+            childCards.Add(CreateAndAddCardsRecursive(card, cardContext.ReferencedCardContexts[i]));
         }
 
         card.SetChildCards(childCards);
@@ -55,8 +47,88 @@ public class CardManager : MonoBehaviour
         
     }
 
+    private void Update()
+    {
+        foreach (Card topCard in _topCardList)
+        {
+            topCard.SynchronizeHeight();
+        }
 
 
+    }
+
+    public void DisplayReferencedCards(Card card)
+    {
+        List<Card> childCardsCopy = new(card.GetChildCards());
+
+        foreach (Card activeCard in childCardsCopy)
+        {
+            activeCard.GetParentCard().GetChildCards().Remove(activeCard);
+            activeCard.SetParentCard(null);
+            _topCardList.Add(activeCard);
+        }
+
+        MoveCardToHighlightPos(card);
+
+        FanOutCardListAtPos(card.GetCardContext().GetListOfReferencedCards());
+
+        if (card.GetCardContext().GetParentContext() != null)
+        {
+            PutCardInStepOutPos(card.GetCardContext().GetParentContext().GetCard());
+
+            //PutUnusedCardOnDiscardPile(MakeDiscardCard(card.GetCardContext().ParentCardContext));
+        }
+
+        
+
+
+        
+        
+        
+
+    }
+
+    public void MoveCardToHighlightPos(Card card)
+    {
+        card.transform.position = new Vector3(-5f, card.transform.position.y, 0f);
+    }
+
+    public void FanOutCardListAtPos(List<Card> cardList)
+    {
+        for (int i = 0; i < cardList.Count; i++)
+        {
+            cardList[i].transform.position = new Vector3(2f * i, cardList[i].transform.position.y, 0f);
+        }
+    }
+
+    public void PutCardInStepOutPos(Card card)
+    {
+
+        card.transform.position = new Vector3(-5f, card.transform.position.y, 3f);
+    }
+    /*
+    public Card MakeDiscardCard(CardContext excludeCardsWithDeeperContext)
+    {
+        List<Card> unusedCards = new();
+
+        foreach (Card card in _topCardList)
+        {
+            // is this card being used on the field?
+            // if not, add it to unusedCards and sort these afterwards
+
+            if (card.GetCardContext().IsDeeperEqual(excludeCardsWithDeeperContext))
+            {
+
+            }
+
+        }
+    }
+    */
+
+    public void PutUnusedCardOnDiscardPos(Card discardCard)
+    {
+
+    }
 
     #region Create Stuff
     public Pile CreatePileWithCards(List<Card> cardList)

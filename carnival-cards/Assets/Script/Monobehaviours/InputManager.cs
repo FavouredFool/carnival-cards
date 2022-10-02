@@ -9,20 +9,14 @@ public class InputManager : MonoBehaviour
     public TextAsset textJSON;
 
 
-    /**
-    private void CreateCompleteDeck()
+    void Update()
     {
-        Pile newPile = _cardManager.CreatePile();
 
-        for (int i = ExampleCardContexts.GetTotalCards() - 1; i >= 0; i--)
+        if (Input.GetMouseButtonDown(0))
         {
-            _cardManager.CreateCardAddToPile(newPile);
+            FindCardFromClick();
         }
-
-        _cardManager.MovePileRandom(newPile);
     }
-    */
-
 
     private Card GetCardFromMouseClick()
     {
@@ -41,28 +35,6 @@ public class InputManager : MonoBehaviour
         return null;
     }
 
-    private void DisplayReferencedCards(Card card)
-    {
-        List<Card> childCardsCopy = new(card.GetChildCards());
-
-        foreach (Card activeCard in childCardsCopy)
-        {
-            activeCard.GetParentCard().GetChildCards().Remove(activeCard);
-            activeCard.SetParentCard(null);
-
-            _cardManager.MoveCardRandom(activeCard);
-        }
-    }
-
-
-    void Update()
-    {
-
-        if (Input.GetMouseButtonDown(0))
-        {
-            FindCardFromClick();
-        }
-    }
 
     private void FindCardFromClick()
     {
@@ -73,6 +45,6 @@ public class InputManager : MonoBehaviour
             return;
         }
 
-        DisplayReferencedCards(foundCard);
+        _cardManager.DisplayReferencedCards(foundCard);
     }
 }
