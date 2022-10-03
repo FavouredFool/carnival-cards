@@ -10,6 +10,9 @@ public class Card : MonoBehaviour
 
     private Card _parentCard;
 
+    private IOnClickAction _onClickAction;
+
+
     public void Update()
     {
         SynchronizeVisual();
@@ -19,6 +22,11 @@ public class Card : MonoBehaviour
     public void Init(CardContext cardContext)
     {
         _cardContext = cardContext;
+    }
+
+    public void OnClickAction(CardManager cardManager)
+    {
+        _onClickAction.OnClick(cardManager, this);
     }
 
     public void AttachCardAtEnd(Card cardToAttach)
@@ -136,6 +144,17 @@ public class Card : MonoBehaviour
         }
 
         return parentCard;
+    }
+
+
+    public void SetOnClickAction(IOnClickAction onClickAction)
+    {
+        _onClickAction = onClickAction;
+    }
+
+    public IOnClickAction GetOnClickAction()
+    {
+        return _onClickAction;
     }
 
     public string GetCardLabel()

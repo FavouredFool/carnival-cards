@@ -11,7 +11,6 @@ public class InputManager : MonoBehaviour
 
     void Update()
     {
-
         if (Input.GetMouseButtonDown(0))
         {
             FindCardFromClick();
@@ -45,6 +44,8 @@ public class InputManager : MonoBehaviour
             return;
         }
 
-        _cardManager.DisplayReferencedCards(foundCard);
+        foundCard.OnClickAction(_cardManager);
+
+        //_cardManager.DisplayReferencedCards(foundCard);
     }
 }

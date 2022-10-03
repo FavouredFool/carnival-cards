@@ -7,14 +7,13 @@ public class CardManager : MonoBehaviour
 {
     public TextAsset _jsonText;
     public CardFactory _cardFactory;
+    public LayoutManager _layoutManager;
+    public OnClickManager _onClickManager;
 
     private List<Card> _topCardList = new();
     private Card _discardCard = null;
 
     private JsonReader jsonReader;
-
-    private Vector2 _highlightPos = new Vector2(-5f, 0f);
-    private Vector2 _stepOutPos = new Vector2(-5f, 3f);
 
 
     private void Start()
@@ -26,6 +25,8 @@ public class CardManager : MonoBehaviour
         Card card = CreateAndAddCardsRecursive(null, rootCardContext);
 
         _topCardList.Add(card);
+
+        card.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPIN));
 
     }
 
@@ -54,9 +55,7 @@ public class CardManager : MonoBehaviour
         }
     }
 
-
-
-    public void DisplayReferencedCards(Card card)
+    public void SetPlaceLayout(Card card)
     {
         List<Card> childCardsCopy = new(card.GetChildCards());
         CardContext greaterCardContext = card.GetCardContext().GetParentContext();
@@ -66,32 +65,32 @@ public class CardManager : MonoBehaviour
             DetachCard(activeCard);
         }
 
-        MoveCard(card, _highlightPos);
-        FanOutCardListAtPos(card.GetCardContext().GetListOfReferencedCards());
-
         if (greaterCardContext != null)
         {
             AddSiblingsToGreaterCard(card, greaterCardContext);
-            MoveCard(greaterCardContext.GetCard(), _stepOutPos);
-
+            
             CardContext greaterGreaterCardContext = greaterCardContext.GetParentContext();
 
             if (greaterGreaterCardContext != null)
             {
                 AddToDiscardCard(greaterGreaterCardContext);
             }
-
         }
 
-        if (_discardCard != null)
+        Card mainCard = card;
+        List<Card> fanoutCards = card.GetCardContext().GetListOfReferencedCards();
+        Card backCard = null;
+
+        if (greaterCardContext != null)
         {
-            _discardCard.transform.position = new Vector3(5f, card.transform.position.y, 3f);
+            backCard = greaterCardContext.GetCard();
         }
+
+        _layoutManager.SetPlaceLayout(mainCard, fanoutCards, backCard, _discardCard);
     }
 
     public void AddToDiscardCard(CardContext greaterGreaterCardContext)
     {
-        // Add to discard Card
         if (_discardCard == null)
         {
             _discardCard = greaterGreaterCardContext.GetCard();
@@ -113,13 +112,7 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    public void FanOutCardListAtPos(List<Card> cardList)
-    {
-        for (int i = 0; i < cardList.Count; i++)
-        {
-            MoveCard(cardList[i], new Vector2(2f * i, 0f));
-        }
-    }
+
 
 
     #region Attach / Detach
@@ -136,11 +129,6 @@ public class CardManager : MonoBehaviour
         {
             Debug.LogWarning("FEHLER");
         }
-
-        // Find correct position in baseCard-Hierachie
-
-        Debug.Log("base: " + baseCard.name);
-        Debug.Log("attach: " + cardToAttach.name);
 
         baseCard.AttachCardAtEnd(cardToAttach);
 
@@ -161,9 +149,6 @@ public class CardManager : MonoBehaviour
             newCard.SetParentCard(parentCard);
         }
         
-
-        // TODO: HEIGHT SETZEN
-        //newCard.transform.localPosition = new Vector3(0, 0.05f * index, 0);
         return newCard;
     }
 
@@ -173,17 +158,6 @@ public class CardManager : MonoBehaviour
     }
     #endregion
 
-    #region Move Card
-    public void MoveCard(Card card, Vector2 newPosition)
-    {
-        card.transform.position = new Vector3(newPosition.x, card.transform.position.y, newPosition.y);
-    }
-
-    public void MoveCardRandom(Card card)
-    {
-        MoveCard(card, Random.insideUnitCircle * 3);
-    }
-    #endregion
 
 
 }
