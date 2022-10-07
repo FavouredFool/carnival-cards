@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StepOutAction : IOnClickAction
+public class StepToAction : IOnClickAction
 {
     public void OnClick(CardManager cardManager, Card card)
     {
-        Debug.Log("stepOut");
+        cardManager.SetLayout(card);
     }
 }

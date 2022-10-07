@@ -24,6 +24,8 @@ public class CardContext
     private CardContext _parentContext;
 
 
+
+
     public void InitCardContextRecursive(CardContext parentCardContext, List<int> upperIdentifier, int index)
     {
         SetParentContext(parentCardContext);
@@ -76,6 +78,18 @@ public class CardContext
         }
 
         return listOfCards;
+    }
+
+    public CardContext GetRootContext()
+    {
+        CardContext parentContext = this;
+
+        while (parentContext.GetParentContext() != null)
+        {
+            parentContext = parentContext.GetParentContext();
+        }
+
+        return parentContext;
     }
 
     public CardContext GetParentContext()

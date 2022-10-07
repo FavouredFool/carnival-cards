@@ -13,6 +13,8 @@ public class CardManager : MonoBehaviour
     private List<Card> _topCardList = new();
     private Card _discardCard = null;
 
+    private CardContext _rootCardContext;
+
     private JsonReader jsonReader;
 
 
@@ -20,25 +22,65 @@ public class CardManager : MonoBehaviour
     {
         jsonReader = new JsonReader();
         
-        CardContext rootCardContext = jsonReader.ReadJsonForCardContext(_jsonText);
-        rootCardContext.InitCardContextRecursive(null, new List<int>(), 0);
-        Card card = CreateAndAddCardsRecursive(null, rootCardContext);
+        _rootCardContext = jsonReader.ReadJsonForCardContext(_jsonText);
+        _rootCardContext.InitCardContextRecursive(null, new List<int>(), 0);
+
+        Card card = CreateNewCardDeck();
+        
+        //_layoutManager.SetPlaceLayout(null, startItem, null, null);
+
+        SetLayout(card);
+    }
+
+    private Card CreateNewCardDeck()
+    {
+        _topCardList.Clear();
+
+        Card card = CreateAndAddCardsRepeating(null, _rootCardContext);
 
         _topCardList.Add(card);
 
-        card.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPIN));
+        return card;
+    }
+
+    private Card ResetExistingCardDeck()
+    {
+        // Reference Cardcontext to set cards back in their place
+        return ResetCardRepeating(_rootCardContext);
 
     }
 
+    private Card ResetCardRepeating(CardContext cardContext)
+    {
+        Card cardToReset = cardContext.GetCard();
+        if (cardContext.GetParentContext() != null)
+        {
+            cardToReset.SetParentCard(cardContext.GetParentContext().GetCard());
+        }
+        else
+        {
+            cardToReset.SetParentCard(null);
+        }
 
-    private Card CreateAndAddCardsRecursive(Card parentCard, CardContext cardContext)
+        cardToReset.SetChildCards(cardContext.GetListOfReferencedCards());
+
+        foreach (Card childCard in cardToReset.GetChildCards())
+        {
+            ResetCardRepeating(childCard.GetCardContext());
+        }
+
+        return cardToReset;
+    }
+
+
+    private Card CreateAndAddCardsRepeating(Card parentCard, CardContext cardContext)
     {
         Card card = CreateCardAddToCard(parentCard, cardContext);
 
         List<Card> childCards = new();
         for (int i = 0; i < cardContext.ChildCardContexts.Count; i++)
         {
-            childCards.Add(CreateAndAddCardsRecursive(card, cardContext.ChildCardContexts[i]));
+            childCards.Add(CreateAndAddCardsRepeating(card, cardContext.ChildCardContexts[i]));
         }
 
         card.SetChildCards(childCards);
@@ -55,72 +97,90 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    public void SetPlaceLayout(Card card)
+    public void SetLayout(Card pressedCard)
     {
-        List<Card> childCardsCopy = new(card.GetChildCards());
-        CardContext greaterCardContext = card.GetCardContext().GetParentContext();
-
-        foreach (Card activeCard in childCardsCopy)
-        {
-            DetachCard(activeCard);
-        }
-
-        if (greaterCardContext != null)
-        {
-            AddSiblingsToGreaterCard(card, greaterCardContext);
-            
-            CardContext greaterGreaterCardContext = greaterCardContext.GetParentContext();
-
-            if (greaterGreaterCardContext != null)
-            {
-                AddToDiscardCard(greaterGreaterCardContext);
-            }
-        }
-
-        Card mainCard = card;
-        List<Card> fanoutCards = card.GetCardContext().GetListOfReferencedCards();
+        Card mainCard = null;
+        List<Card> subCards = new List<Card>();
         Card backCard = null;
+        Card discardCard = null;
+        
 
-        if (greaterCardContext != null)
+        CardContext pressedCardContext = pressedCard.GetCardContext();
+
+        // Reset everything
+        Card rootCard = ResetExistingCardDeck();
+
+        // Find cards relative to pressedCard
+
+        //Main
+        mainCard = pressedCard;
+
+        //Sub
+        subCards = pressedCardContext.GetListOfReferencedCards();
+        
+        CardContext parentCardContext = pressedCardContext.GetParentContext();
+
+        if (parentCardContext != null)
         {
-            backCard = greaterCardContext.GetCard();
+            //Back
+            backCard = parentCardContext.GetCard();
         }
 
-        _layoutManager.SetPlaceLayout(mainCard, fanoutCards, backCard, _discardCard);
+        Card root = rootCard;
+
+        if (root != pressedCard && root != parentCardContext.GetCard())
+        {
+            //Discard
+            discardCard = root;
+        }
+
+        // Change their Behaviour
+
+        DetachCard(mainCard);
+        foreach(Card subCard in subCards)
+        {
+            DetachCard(subCard);
+        }
+        if (backCard != null)
+        {
+            DetachCard(backCard);
+        }
+        if (discardCard != null)
+        {
+            DetachCard(discardCard);
+        }
+
+
+        mainCard.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.NOTHING));
+        foreach (Card subCard in subCards)
+        {
+            subCard.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPIN));
+        }
+        if (backCard != null)
+        {
+            backCard.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPOUT));
+        }
+        if (discardCard != null)
+        {
+            discardCard.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.NOTHING));
+        }
+        
+        _layoutManager.SetPlaceLayout(mainCard, subCards, backCard, discardCard);
     }
-
-    public void AddToDiscardCard(CardContext greaterGreaterCardContext)
-    {
-        if (_discardCard == null)
-        {
-            _discardCard = greaterGreaterCardContext.GetCard();
-        }
-        else
-        {
-            AttachCard(greaterGreaterCardContext.GetCard(), _discardCard);
-        }
-    }
-
-    public void AddSiblingsToGreaterCard(Card baseCard, CardContext greaterCardContext)
-    {
-        foreach (Card sibling in greaterCardContext.GetListOfReferencedCards())
-        {
-            if (sibling != baseCard)
-            {
-                AttachCard(sibling, greaterCardContext.GetCard());
-            }
-        }
-    }
-
-
-
 
     #region Attach / Detach
     public void DetachCard(Card cardToRemove)
     {
-        cardToRemove.GetParentCard().GetChildCards().Remove(cardToRemove);
-        cardToRemove.SetParentCard(null);
-        _topCardList.Add(cardToRemove);
+        if (cardToRemove.GetParentCard() != null)
+        {
+            cardToRemove.GetParentCard().GetChildCards().Remove(cardToRemove);
+            cardToRemove.SetParentCard(null);
+            
+            _topCardList.Add(cardToRemove);
+
+            cardToRemove.SynchronizeVisual();
+        }
+        
     }
 
     public void AttachCard(Card cardToAttach, Card baseCard)

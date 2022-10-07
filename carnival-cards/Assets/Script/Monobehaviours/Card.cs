@@ -12,7 +12,6 @@ public class Card : MonoBehaviour
 
     private IOnClickAction _onClickAction;
 
-
     public void Update()
     {
         SynchronizeVisual();

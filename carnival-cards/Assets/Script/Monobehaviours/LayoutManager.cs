@@ -9,19 +9,22 @@ public class LayoutManager : MonoBehaviour
     public void SetPlaceLayout(Card mainCard, List<Card> subCards, Card backCard, Card discardCard)
     {
         Vector2 mainPos = new Vector2(-5f, 0f);
-        Vector2 stepOutPos = new Vector2(-5f, 3f);
+        Vector2 backPos = new Vector2(-5f, 3f);
         Vector2 discardPos = new Vector2(5f, 3f);
 
-        mainCard.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.NOTHING));
+        if (mainCard != null)
+        {
+            mainCard.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.NOTHING));
+        }
         
         if (backCard != null)
         {
-            backCard.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPOUT));
+            backCard.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPTO));
         }
 
         for (int i = 0; i < subCards.Count; i++)
         {
-            subCards[i].SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPIN));
+            subCards[i].SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPTO));
         }
 
         if (discardCard != null)
@@ -30,14 +33,16 @@ public class LayoutManager : MonoBehaviour
         }
 
 
-        CardContext greaterCardContext = mainCard.GetCardContext().GetParentContext();
+        if (mainCard != null)
+        {
+            MoveCard(mainCard, mainPos);
+        }
 
-        MoveCard(mainCard, mainPos);
         FanOutCardListAtPos(subCards);
 
-        if (greaterCardContext != null)
+        if (backCard != null)
         {
-            MoveCard(backCard, stepOutPos);
+            MoveCard(backCard, backPos);
         }
 
         if (discardCard != null)
@@ -73,6 +78,7 @@ public class LayoutManager : MonoBehaviour
     #region Move Card
     public void MoveCard(Card card, Vector2 newPosition)
     {
+        card.transform.localPosition = Vector3.zero;
         card.transform.position = new Vector3(newPosition.x, card.transform.position.y, newPosition.y);
     }
 

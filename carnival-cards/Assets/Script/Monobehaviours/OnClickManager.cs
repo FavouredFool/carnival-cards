@@ -6,30 +6,25 @@ public class OnClickManager : MonoBehaviour
 {
     public CardManager _cardManager;
 
-    private IOnClickAction _stepInAction;
-    private IOnClickAction _stepOutAction;
+    private IOnClickAction _stepToAction;
     private IOnClickAction _nothingAction;
 
 
-    public void Start()
+    public void Awake()
     {
-        _stepInAction = new StepInAction();
-        _stepOutAction = new StepOutAction();
+        _stepToAction = new StepToAction();
         _nothingAction = new NothingAction();
     }
 
-    public enum OnClickAction { STEPIN, STEPOUT, NOTHING }
+    public enum OnClickAction { STEPTO, NOTHING }
 
 
     public IOnClickAction GetActionFromOnClickAction(OnClickAction actionEnum)
     {
         switch (actionEnum)
         {
-            case OnClickAction.STEPIN:
+            case OnClickAction.STEPTO:
                 return _stepInAction;
-
-            case OnClickAction.STEPOUT:
-                return _stepOutAction;
 
             case OnClickAction.NOTHING:
                 return _nothingAction;
