@@ -10,9 +10,9 @@ public class CardManager : MonoBehaviour
     public LayoutManager _layoutManager;
     public OnClickManager _onClickManager;
 
-    private List<CardContext> _topCardContextList = new();
+    private List<Context> _topContextList = new();
 
-    private CardContext _rootCardContext;
+    private Context _rootContext;
 
     private JsonReader jsonReader;
 
@@ -21,64 +21,64 @@ public class CardManager : MonoBehaviour
     {
         jsonReader = new JsonReader();
         
-        _rootCardContext = jsonReader.ReadJsonForCardContext(_jsonText);
-        _rootCardContext.InitCardContextRecursive(null, new List<int>(), 0);
+        _rootContext = jsonReader.ReadJsonForContext(_jsonText);
+        _rootContext.InitContextRecursive(null, new List<int>(), 0);
 
         CreateNewCardDeck();
        
-        SetLayout(_rootCardContext);
+        SetLayout(_rootContext);
     }
 
-    public CardContext FindCardContextFromCard(Card card)
+    public Context FindContextFromCard(Card card)
     {
-        return _rootCardContext.FindCardContextFromCard(card);
+        return _rootContext.FindContextFromCard(card);
     }
 
     private void CreateNewCardDeck()
     {
-        _topCardContextList.Clear();
+        _topContextList.Clear();
 
-        CreateAndAddCardsRepeating(null, _rootCardContext);
+        CreateAndAddCardsRepeating(null, _rootContext);
 
-        _topCardContextList.Add(_rootCardContext);
+        _topContextList.Add(_rootContext);
     }
 
     private void ResetExistingCardDeck()
     {
         // Reference Cardcontext to set cards back in their place
-        ResetCardRepeating(_rootCardContext);
-        _topCardContextList.Clear();
-        _topCardContextList.Add(_rootCardContext);
+        ResetCardRepeating(_rootContext);
+        _topContextList.Clear();
+        _topContextList.Add(_rootContext);
 
     }
 
-    private void ResetCardRepeating(CardContext cardContext)
+    private void ResetCardRepeating(Context context)
     {
-        Card cardToReset = cardContext.GetCard();
-        if (cardContext.GetParentContext() != null)
+        Card cardToReset = context.GetCard();
+        if (context.GetParentContext() != null)
         {
-            cardToReset.SetParentCard(cardContext.GetParentContext().GetCard());
+            cardToReset.SetParentCard(context.GetParentContext().GetCard());
         }
         else
         {
             cardToReset.SetParentCard(null);
         }
 
-        foreach (CardContext childCardContext in cardContext.ChildCardContexts)
+        foreach (Context childContext in context.ChildContexts)
         {
-            ResetCardRepeating(childCardContext);
+            ResetCardRepeating(childContext);
         }
     }
 
 
-    private Card CreateAndAddCardsRepeating(Card parentCard, CardContext cardContext)
+    private Card CreateAndAddCardsRepeating(Card parentCard, Context context)
     {
-        Card card = CreateCardAddToCard(parentCard, cardContext);
+        Card card = CreateCardAddToCard(parentCard, context);
 
         List<Card> childCards = new();
-        for (int i = 0; i < cardContext.ChildCardContexts.Count; i++)
+        for (int i = 0; i < context.ChildContexts.Count; i++)
         {
-            childCards.Add(CreateAndAddCardsRepeating(card, cardContext.ChildCardContexts[i]));
+            childCards.Add(CreateAndAddCardsRepeating(card, context.ChildContexts[i]));
         }
 
         return card;
@@ -87,18 +87,18 @@ public class CardManager : MonoBehaviour
 
     private void Update()
     {
-        foreach (CardContext topCardContext in _topCardContextList)
+        foreach (Context topContext in _topContextList)
         {
-            topCardContext.SynchronizeHeight();
+            topContext.SynchronizeHeight();
         }
     }
 
-    public void SetLayout(CardContext pressedCardContext)
+    public void SetLayout(Context pressedContext)
     {
-        CardContext mainCardContext;
-        List<CardContext> subCardContexts;
-        CardContext backCardContext;
-        CardContext discardCardContext = null;
+        Context mainContext;
+        List<Context> subContexts;
+        Context backContext;
+        Context discontext = null;
         
 
         // Reset everything
@@ -107,63 +107,63 @@ public class CardManager : MonoBehaviour
         // Find cards relative to pressedCard
 
         //Main
-        mainCardContext = pressedCardContext;
+        mainContext = pressedContext;
 
         //Sub
-        subCardContexts = pressedCardContext.ChildCardContexts;
+        subContexts = pressedContext.ChildContexts;
 
         //Back
-        backCardContext = pressedCardContext.GetParentContext();
+        backContext = pressedContext.GetParentContext();
 
-        if (_rootCardContext != mainCardContext && _rootCardContext != backCardContext)
+        if (_rootContext != mainContext && _rootContext != backContext)
         {
             //Discard
-            discardCardContext = _rootCardContext;
+            discontext = _rootContext;
         }
 
         // Change their Behaviour
 
-        DetachCard(mainCardContext);
-        foreach(CardContext subCardContext in subCardContexts)
+        DetachCard(mainContext);
+        foreach(Context subContext in subContexts)
         {
-            DetachCard(subCardContext);
+            DetachCard(subContext);
         }
-        if (backCardContext != null)
+        if (backContext != null)
         {
-            DetachCard(backCardContext);
+            DetachCard(backContext);
         }
-        if (discardCardContext != null)
+        if (discontext != null)
         {
-            DetachCard(discardCardContext);
+            DetachCard(discontext);
         }
         
-        _layoutManager.SetPlaceLayout(mainCardContext, subCardContexts, backCardContext, discardCardContext);
+        _layoutManager.SetPlaceLayout(mainContext, subContexts, backContext, discontext);
     }
 
     #region Attach / Detach
-    public void DetachCard(CardContext contextToRemove)
+    public void DetachCard(Context contextToRemove)
     {
         if (contextToRemove.GetCard().GetIsAttached())
         {
             contextToRemove.GetCard().SetParentCard(null);
             
-            _topCardContextList.Add(contextToRemove);
+            _topContextList.Add(contextToRemove);
 
             contextToRemove.GetCard().SynchronizeVisual();
         }
         
     }
 
-    public void AttachCard(CardContext cardContextToAttach, CardContext baseCardContext)
+    public void AttachCard(Context contextToAttach, Context baseContext)
     {
-        if (!_topCardContextList.Contains(cardContextToAttach))
+        if (!_topContextList.Contains(contextToAttach))
         {
             Debug.LogWarning("FEHLER");
         }
 
-        baseCardContext.AttachCardAtEnd(cardContextToAttach);
+        baseContext.AttachCardAtEnd(contextToAttach);
 
-        _topCardContextList.Remove(cardContextToAttach);
+        _topContextList.Remove(contextToAttach);
     }
 
     #endregion
@@ -171,9 +171,9 @@ public class CardManager : MonoBehaviour
 
     #region Create Stuff
 
-    public Card CreateCardAddToCard(Card parentCard, CardContext cardContext)
+    public Card CreateCardAddToCard(Card parentCard, Context context)
     {
-        Card newCard = CreateCard(cardContext);
+        Card newCard = CreateCard(context);
 
         if (parentCard != null)
         {
@@ -183,9 +183,9 @@ public class CardManager : MonoBehaviour
         return newCard;
     }
 
-    public Card CreateCard(CardContext cardContext)
+    public Card CreateCard(Context context)
     {
-        return _cardFactory.CreateNewInstance(cardContext);
+        return _cardFactory.CreateNewInstance(context);
     }
     #endregion
 

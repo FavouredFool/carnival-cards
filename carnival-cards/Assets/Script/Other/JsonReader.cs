@@ -6,9 +6,9 @@ using Newtonsoft.Json;
 public class JsonReader
 {
 
-    public CardContext ReadJsonForCardContext(TextAsset jsonText)
+    public Context ReadJsonForContext(TextAsset jsonText)
     {
-        return JsonConvert.DeserializeObject<CardContext>(jsonText.text);
+        return JsonConvert.DeserializeObject<Context>(jsonText.text);
 
     }
 }

@@ -4,5 +4,5 @@ using UnityEngine;
 
 public interface IOnClickAction
 {
-    public void OnClick(CardManager cardManager, CardContext cardContext);
+    public void OnClick(CardManager cardManager, Context context);
 }

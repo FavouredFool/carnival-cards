@@ -6,14 +6,14 @@ using Newtonsoft.Json.Converters;
 using static CardTypeManager;
 
 
-public class CardContext
+public class Context
 {
     [JsonConverter(typeof(StringEnumConverter))]
     public CardType Type { get; set; }
 
     public string Name { get; set; }
 
-    public List<CardContext> ChildCardContexts { get; set; }
+    public List<Context> ChildContexts { get; set; }
 
 
 
@@ -21,37 +21,37 @@ public class CardContext
 
     private List<int> _identifier;
 
-    private CardContext _parentContext;
+    private Context _parentContext;
 
     private IOnClickAction _onClickAction;
 
 
-    public void InitCardContextRecursive(CardContext parentCardContext, List<int> upperIdentifier, int index)
+    public void InitContextRecursive(Context parentContext, List<int> upperIdentifier, int index)
     {
-        SetParentContext(parentCardContext);
+        SetParentContext(parentContext);
 
         List<int> identifier = new();
         identifier.AddRange(upperIdentifier);
         identifier.Add(index);
         SetIdentifier(identifier);
 
-        for (int i = 0; i < ChildCardContexts.Count; i++)
+        for (int i = 0; i < ChildContexts.Count; i++)
         {
-            ChildCardContexts[i].InitCardContextRecursive(this, identifier, i);
+            ChildContexts[i].InitContextRecursive(this, identifier, i);
         }
 
     }
 
-    public CardContext FindCardContextFromCard(Card card)
+    public Context FindContextFromCard(Card card)
     {
         if (GetCard() == card)
         {
             return this;
         }
 
-        foreach (CardContext cardContext in ChildCardContexts)
+        foreach (Context context in ChildContexts)
         {
-            CardContext result = cardContext.FindCardContextFromCard(card);
+            Context result = context.FindContextFromCard(card);
             if (result != null)
             {
                 return result;
@@ -61,41 +61,41 @@ public class CardContext
         return null;
     }
 
-    public void AttachCardAtEnd(CardContext cardContextToAttach)
+    public void AttachCardAtEnd(Context contextToAttach)
     {
-        if (!cardContextToAttach.IsDeeperEqual(this))
+        if (!contextToAttach.IsDeeperEqual(this))
         {
             Debug.Log("FEHLER: BASIS ZU TIEF");
             return;
         }
 
-        AttachCardRecursive(cardContextToAttach, GetIdentifier().Count);
+        AttachCardRecursive(contextToAttach, GetIdentifier().Count);
     }
 
-    private void AttachCardRecursive(CardContext cardContextToAttach, int depth)
+    private void AttachCardRecursive(Context contextToAttach, int depth)
     {
-        List<int> cardToAttachIdentifer = cardContextToAttach.GetIdentifier();
+        List<int> cardToAttachIdentifer = contextToAttach.GetIdentifier();
 
         if (cardToAttachIdentifer.Count == depth)
         {
             Debug.LogWarning("FEHLER: IDENTIFIER VORBEI");
         }
 
-        for (int i = 0; i < cardContextToAttach.ChildCardContexts.Count; i++)
+        for (int i = 0; i < contextToAttach.ChildContexts.Count; i++)
         {
-            if (cardContextToAttach.ChildCardContexts[i].GetIdentifier()[depth] == cardToAttachIdentifer[depth])
+            if (contextToAttach.ChildContexts[i].GetIdentifier()[depth] == cardToAttachIdentifer[depth])
             {
                 //Found correct card, go deeper if identifier is not fully traversed
 
                 // Is this card child of parent? -> if not, attach
-                if (!cardContextToAttach.ChildCardContexts[i].GetCard().GetIsAttached())
+                if (!contextToAttach.ChildContexts[i].GetCard().GetIsAttached())
                 {
-                    GetCard().AttachCardDirectly(cardContextToAttach.ChildCardContexts[i].GetCard());
+                    GetCard().AttachCardDirectly(contextToAttach.ChildContexts[i].GetCard());
 
                 }
                 else
                 {
-                    cardContextToAttach.ChildCardContexts[i].AttachCardRecursive(cardContextToAttach, ++depth);
+                    contextToAttach.ChildContexts[i].AttachCardRecursive(contextToAttach, ++depth);
                 }
 
                 break;
@@ -118,7 +118,7 @@ public class CardContext
         GetCard().SetHeight(height);
 
         height = 0;
-        foreach (CardContext card in ChildCardContexts)
+        foreach (Context card in ChildContexts)
         {
             if (card.GetCard().GetIsAttached())
             {
@@ -139,7 +139,7 @@ public class CardContext
     {
         counter += 1;
 
-        foreach (CardContext context in ChildCardContexts)
+        foreach (Context context in ChildContexts)
         {
             if (context.GetCard().GetIsAttached())
             {
@@ -159,7 +159,7 @@ public class CardContext
     private int AddCardAmountRecursive(int counter)
     {
         counter += 1;
-        foreach (CardContext context in ChildCardContexts)
+        foreach (Context context in ChildContexts)
         {
             counter = context.AddCardAmountRecursive(counter);
         }
@@ -167,7 +167,7 @@ public class CardContext
         return counter;
     }
 
-    public bool IsDeeperEqual(CardContext cardToCompare)
+    public bool IsDeeperEqual(Context cardToCompare)
     {
         // wenn this deeper als cardToCompare -> true
 
@@ -197,7 +197,7 @@ public class CardContext
     {
         List<Card> listOfCards = new();
 
-        foreach (CardContext context in ChildCardContexts)
+        foreach (Context context in ChildContexts)
         {
             listOfCards.Add(context.GetCard());
         }
@@ -205,9 +205,9 @@ public class CardContext
         return listOfCards;
     }
 
-    public CardContext GetNextNotAttachedContext()
+    public Context GetNextNotAttachedContext()
     {
-        CardContext activeContext = this;
+        Context activeContext = this;
 
         while (activeContext.GetParentContext() != null && activeContext.GetCard().GetIsAttached())
         {
@@ -222,12 +222,12 @@ public class CardContext
         _onClickAction.OnClick(cardManager, this);
     }
 
-    public CardContext GetParentContext()
+    public Context GetParentContext()
     {
         return _parentContext;
     }
 
-    public void SetParentContext(CardContext parentContext)
+    public void SetParentContext(Context parentContext)
     {
         _parentContext = parentContext;
     }

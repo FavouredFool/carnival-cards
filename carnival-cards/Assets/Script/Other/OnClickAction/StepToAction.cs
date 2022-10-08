@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class StepToAction : IOnClickAction
 {
-    public void OnClick(CardManager cardManager, CardContext cardContext)
+    public void OnClick(CardManager cardManager, Context context)
     {
-        cardManager.SetLayout(cardContext);
+        cardManager.SetLayout(context);
     }
 }

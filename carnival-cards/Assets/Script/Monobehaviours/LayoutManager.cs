@@ -6,7 +6,7 @@ public class LayoutManager : MonoBehaviour
 {
     public OnClickManager _onClickManager;
 
-    public void SetPlaceLayout(CardContext mainCard, List<CardContext> subCards, CardContext backCard, CardContext discardCard)
+    public void SetPlaceLayout(Context mainCard, List<Context> subCards, Context backCard, Context discardCard)
     {
         Vector2 mainPos = new Vector2(-5f, 0f);
         Vector2 backPos = new Vector2(-5f, 3f);
@@ -56,7 +56,7 @@ public class LayoutManager : MonoBehaviour
         MoveCard(mainCard, mainPos);
     }
 
-    public void FanOutCardListAtPos(List<CardContext> cardList)
+    public void FanOutCardListAtPos(List<Context> cardList)
     {
         for (int i = 0; i < cardList.Count; i++)
         {
