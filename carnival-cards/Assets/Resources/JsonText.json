@@ -1,32 +1,32 @@
 {
     "name": "Entryway",
     "type": "PLACE",
-    "childCardContexts": [
+    "childContexts": [
         {
             "name": "Dining Room",
             "type": "PLACE",
-            "childCardContexts": [
+            "childContexts": [
                 {
                     "name": "Kitchen",
                     "type": "PLACE",
-                    "childCardContexts": [
+                    "childContexts": [
                         {
                             "name": "Pantry",
                             "type": "PLACE",
-                            "childCardContexts": [
+                            "childContexts": [
                                 {
                                     "name": "Mousehole",
                                     "type": "PLACE",
-                                    "childCardContexts": [
+                                    "childContexts": [
                                         {
                                             "name": "Another Universe",
                                             "type": "PLACE", 
-                                            "childCardContexts": []
+                                            "childContexts": []
                                         },
                                         {
                                             "name": "Another Multiverse",
                                             "type": "PLACE",
-                                            "childCardContexts": []
+                                            "childContexts": []
                                         }
                                     ]
                                 }
@@ -37,14 +37,14 @@
                 {
                     "name": "Garden",
                     "type": "PLACE",
-                    "childCardContexts": []
+                    "childContexts": []
                 }
             ]
         },
         {
             "name": "Study",
             "type": "PLACE",
-            "childCardContexts": []
+            "childContexts": []
         }
     ]
 }

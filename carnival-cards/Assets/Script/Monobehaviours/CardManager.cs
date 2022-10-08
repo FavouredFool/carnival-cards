@@ -100,7 +100,6 @@ public class CardManager : MonoBehaviour
         Context backContext;
         Context discontext = null;
         
-
         // Reset everything
         ResetExistingCardDeck();
 
