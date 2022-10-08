@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NothingAction : IOnClickAction
 {
-    public void OnClick(CardManager cardManager, Card card)
+    public void OnClick(CardManager cardManager, CardContext cardContext)
     {
         Debug.Log("nothing");
     }

@@ -24,7 +24,7 @@ public class OnClickManager : MonoBehaviour
         switch (actionEnum)
         {
             case OnClickAction.STEPTO:
-                return _stepInAction;
+                return _stepToAction;
 
             case OnClickAction.NOTHING:
                 return _nothingAction;

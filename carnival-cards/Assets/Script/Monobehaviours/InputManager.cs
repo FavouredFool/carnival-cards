@@ -17,7 +17,7 @@ public class InputManager : MonoBehaviour
         }
     }
 
-    private Card GetCardFromMouseClick()
+    private CardContext GetCardContextFromMouseClick()
     {
         Ray shotRay = _camera.ScreenPointToRay(Input.mousePosition);
 
@@ -27,7 +27,7 @@ public class InputManager : MonoBehaviour
             if (hit.collider != null)
             {
                 Card hitCard = hit.collider.GetComponent<Card>();
-                return hitCard.GetRootCard();
+                return _cardManager.FindCardContextFromCard(hitCard).GetNextNotAttachedContext();
             }
         }
 
@@ -37,15 +37,13 @@ public class InputManager : MonoBehaviour
 
     private void FindCardFromClick()
     {
-        Card foundCard = GetCardFromMouseClick();
+        CardContext context = GetCardContextFromMouseClick();
 
-        if (!foundCard)
+        if (context == null)
         {
             return;
         }
 
-        foundCard.OnClickAction(_cardManager);
-
-        //_cardManager.DisplayReferencedCards(foundCard);
+        context.OnClickAction(_cardManager);
     }
 }

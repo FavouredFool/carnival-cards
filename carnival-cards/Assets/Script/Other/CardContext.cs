@@ -23,7 +23,7 @@ public class CardContext
 
     private CardContext _parentContext;
 
-
+    private IOnClickAction _onClickAction;
 
 
     public void InitCardContextRecursive(CardContext parentCardContext, List<int> upperIdentifier, int index)
@@ -40,6 +40,131 @@ public class CardContext
             ChildCardContexts[i].InitCardContextRecursive(this, identifier, i);
         }
 
+    }
+
+    public CardContext FindCardContextFromCard(Card card)
+    {
+        if (GetCard() == card)
+        {
+            return this;
+        }
+
+        foreach (CardContext cardContext in ChildCardContexts)
+        {
+            CardContext result = cardContext.FindCardContextFromCard(card);
+            if (result != null)
+            {
+                return result;
+            }
+        }
+
+        return null;
+    }
+
+    public void AttachCardAtEnd(CardContext cardContextToAttach)
+    {
+        if (!cardContextToAttach.IsDeeperEqual(this))
+        {
+            Debug.Log("FEHLER: BASIS ZU TIEF");
+            return;
+        }
+
+        AttachCardRecursive(cardContextToAttach, GetIdentifier().Count);
+    }
+
+    private void AttachCardRecursive(CardContext cardContextToAttach, int depth)
+    {
+        List<int> cardToAttachIdentifer = cardContextToAttach.GetIdentifier();
+
+        if (cardToAttachIdentifer.Count == depth)
+        {
+            Debug.LogWarning("FEHLER: IDENTIFIER VORBEI");
+        }
+
+        for (int i = 0; i < cardContextToAttach.ChildCardContexts.Count; i++)
+        {
+            if (cardContextToAttach.ChildCardContexts[i].GetIdentifier()[depth] == cardToAttachIdentifer[depth])
+            {
+                //Found correct card, go deeper if identifier is not fully traversed
+
+                // Is this card child of parent? -> if not, attach
+                if (!cardContextToAttach.ChildCardContexts[i].GetCard().GetIsAttached())
+                {
+                    GetCard().AttachCardDirectly(cardContextToAttach.ChildCardContexts[i].GetCard());
+
+                }
+                else
+                {
+                    cardContextToAttach.ChildCardContexts[i].AttachCardRecursive(cardContextToAttach, ++depth);
+                }
+
+                break;
+
+            }
+        }
+    }
+
+    public void SynchronizeHeight()
+    {
+        int startHeight = GetPileAmount() - 1;
+        SetHeightRecursive(0);
+
+        // Hier alles nach oben verschieben weil bisher nach unten gebaut wurde
+        GetCard().SetHeight(startHeight);
+    }
+
+    private int SetHeightRecursive(int height)
+    {
+        GetCard().SetHeight(height);
+
+        height = 0;
+        foreach (CardContext card in ChildCardContexts)
+        {
+            if (card.GetCard().GetIsAttached())
+            {
+                height += -1;
+                height += card.SetHeightRecursive(height);
+            }
+        }
+
+        return height;
+    }
+
+    public int GetPileAmount()
+    {
+        return AddPileAmountRecursive(0);
+    }
+
+    private int AddPileAmountRecursive(int counter)
+    {
+        counter += 1;
+
+        foreach (CardContext context in ChildCardContexts)
+        {
+            if (context.GetCard().GetIsAttached())
+            {
+                counter = context.AddPileAmountRecursive(counter);
+            }
+        }
+
+        return counter;
+    }
+
+
+    public int GetCardAmount()
+    {
+        return AddCardAmountRecursive(0);
+    }
+
+    private int AddCardAmountRecursive(int counter)
+    {
+        counter += 1;
+        foreach (CardContext context in ChildCardContexts)
+        {
+            counter = context.AddCardAmountRecursive(counter);
+        }
+
+        return counter;
     }
 
     public bool IsDeeperEqual(CardContext cardToCompare)
@@ -80,16 +205,21 @@ public class CardContext
         return listOfCards;
     }
 
-    public CardContext GetRootContext()
+    public CardContext GetNextNotAttachedContext()
     {
-        CardContext parentContext = this;
+        CardContext activeContext = this;
 
-        while (parentContext.GetParentContext() != null)
+        while (activeContext.GetParentContext() != null && activeContext.GetCard().GetIsAttached())
         {
-            parentContext = parentContext.GetParentContext();
+            activeContext = activeContext.GetParentContext();
         }
 
-        return parentContext;
+        return activeContext;
+    }
+
+    public void OnClickAction(CardManager cardManager)
+    {
+        _onClickAction.OnClick(cardManager, this);
     }
 
     public CardContext GetParentContext()
@@ -130,6 +260,16 @@ public class CardContext
     public Color GetColor()
     {
         return GetColorFromCardType(Type);
+    }
+
+    public void SetOnClickAction(IOnClickAction onClickAction)
+    {
+        _onClickAction = onClickAction;
+    }
+
+    public IOnClickAction GetOnClickAction()
+    {
+        return _onClickAction;
     }
 
 

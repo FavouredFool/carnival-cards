@@ -6,7 +6,7 @@ public class LayoutManager : MonoBehaviour
 {
     public OnClickManager _onClickManager;
 
-    public void SetPlaceLayout(Card mainCard, List<Card> subCards, Card backCard, Card discardCard)
+    public void SetPlaceLayout(CardContext mainCard, List<CardContext> subCards, CardContext backCard, CardContext discardCard)
     {
         Vector2 mainPos = new Vector2(-5f, 0f);
         Vector2 backPos = new Vector2(-5f, 3f);
@@ -32,22 +32,21 @@ public class LayoutManager : MonoBehaviour
             discardCard.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.NOTHING));
         }
 
-
         if (mainCard != null)
         {
-            MoveCard(mainCard, mainPos);
+            MoveCard(mainCard.GetCard(), mainPos);
         }
 
         FanOutCardListAtPos(subCards);
 
         if (backCard != null)
         {
-            MoveCard(backCard, backPos);
+            MoveCard(backCard.GetCard(), backPos);
         }
 
         if (discardCard != null)
         {
-            MoveCard(discardCard, discardPos);
+            MoveCard(discardCard.GetCard(), discardPos);
         }
     }
 
@@ -57,11 +56,11 @@ public class LayoutManager : MonoBehaviour
         MoveCard(mainCard, mainPos);
     }
 
-    public void FanOutCardListAtPos(List<Card> cardList)
+    public void FanOutCardListAtPos(List<CardContext> cardList)
     {
         for (int i = 0; i < cardList.Count; i++)
         {
-            MoveCard(cardList[i], new Vector2(2f * i, 0f));
+            MoveCard(cardList[i].GetCard(), new Vector2(2f * i, 0f));
         }
     }
 
@@ -78,8 +77,7 @@ public class LayoutManager : MonoBehaviour
     #region Move Card
     public void MoveCard(Card card, Vector2 newPosition)
     {
-        card.transform.localPosition = Vector3.zero;
-        card.transform.position = new Vector3(newPosition.x, card.transform.position.y, newPosition.y);
+        card.transform.localPosition = new Vector3(newPosition.x, card.transform.position.y, newPosition.y);
     }
 
     public void MoveCardRandom(Card card)
