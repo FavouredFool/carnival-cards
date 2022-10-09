@@ -13,7 +13,17 @@ public class InputManager : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
         {
-            FindCardFromClick();
+            if (_cardManager.GetCloseUpContext() != null)
+            {
+                // Zoomed in, zoom out with click
+                _cardManager.SetLayout(_cardManager.GetCloseUpContext());
+            }
+            else
+            {
+                FindCardFromClick();
+            }
+
+            
         }
     }
 

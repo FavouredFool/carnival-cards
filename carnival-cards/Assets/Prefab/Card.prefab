@@ -590,7 +590,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d7995c2c3fc58224fb66a85e2d5b6e79, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  label: {fileID: 0}
+  label: {fileID: 8124305396500096371}
   card: {fileID: 1233431667175397903}
 --- !u!1 &2433668179034142784
 GameObject:

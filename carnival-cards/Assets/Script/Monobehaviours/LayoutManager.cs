@@ -14,7 +14,7 @@ public class LayoutManager : MonoBehaviour
 
         if (mainCard != null)
         {
-            mainCard.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.NOTHING));
+            mainCard.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.CLOSEUP));
         }
         
         if (backCard != null)

@@ -18,6 +18,8 @@ public class Card : MonoBehaviour
 
     public void SynchronizeVisual()
     {
+        transform.localRotation = Quaternion.identity;
+
         if (GetIsAttached())
         {
             transform.localPosition = new Vector3(0, transform.localPosition.y, 0);

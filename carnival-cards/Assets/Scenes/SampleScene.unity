@@ -397,7 +397,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh27134
+  m_Name: pb_Mesh27148
   serializedVersion: 11
   m_SubMeshes:
   - serializedVersion: 2
@@ -556,6 +556,37 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &584351240
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 584351241}
+  m_Layer: 0
+  m_Name: CloseupPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &584351241
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 584351240}
+  m_LocalRotation: {x: 0, y: 0.08715578, z: -0.9961947, w: 0}
+  m_LocalPosition: {x: 0, y: 7.3, z: -1.42}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 10, y: 0, z: -180}
 --- !u!1 &717206643
 GameObject:
   m_ObjectHideFlags: 0
@@ -978,6 +1009,7 @@ MonoBehaviour:
   _cardFactory: {fileID: 717206645}
   _layoutManager: {fileID: 2127150781}
   _onClickManager: {fileID: 1801994920}
+  _closeUpPosition: {fileID: 584351241}
 --- !u!1 &1801994919
 GameObject:
   m_ObjectHideFlags: 0

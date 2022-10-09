@@ -5,12 +5,22 @@ using System.Linq;
 
 public class CardManager : MonoBehaviour
 {
-    public TextAsset _jsonText;
-    public CardFactory _cardFactory;
-    public LayoutManager _layoutManager;
-    public OnClickManager _onClickManager;
+    [Header("Dependencies")]
+    [SerializeField]
+    private TextAsset _jsonText;
+    [SerializeField]
+    private CardFactory _cardFactory;
+    [SerializeField]
+    private LayoutManager _layoutManager;
+    [SerializeField]
+    private OnClickManager _onClickManager;
+
+    [Header("Helpers")]
+    [SerializeField]
+    private Transform _closeUpPosition;
 
     private List<Context> _topContextList = new();
+    private Context _closeUpContext = null;
 
     private Context _rootContext;
 
@@ -27,6 +37,13 @@ public class CardManager : MonoBehaviour
         CreateNewCardDeck();
        
         SetLayout(_rootContext);
+    }
+
+    public void CloseUpCardback(Context context)
+    {
+        // Turn card around, zoom in / enhance. Animation or just "jump"?
+        _closeUpContext = context;
+        context.GetCard().transform.parent = _closeUpPosition;
     }
 
     public Context FindContextFromCard(Card card)
@@ -49,6 +66,7 @@ public class CardManager : MonoBehaviour
         ResetCardRepeating(_rootContext);
         _topContextList.Clear();
         _topContextList.Add(_rootContext);
+        _closeUpContext = null;
 
     }
 
@@ -188,6 +206,15 @@ public class CardManager : MonoBehaviour
     }
     #endregion
 
+    public Transform GetCloseUpPosition()
+    {
+        return _closeUpPosition;
+    }
+
+    public Context GetCloseUpContext()
+    {
+        return _closeUpContext;
+    }
 
 
 }
