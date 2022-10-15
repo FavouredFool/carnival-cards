@@ -1195,6 +1195,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _onClickManager: {fileID: 1801994920}
+  _cardManager: {fileID: 997099337}
 --- !u!4 &2127150782
 Transform:
   m_ObjectHideFlags: 0
