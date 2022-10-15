@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class StepToAction : IOnClickAction
+public class StepPostPostCoverAction : IOnClickAction
 {
     public void OnClick(CardManager cardManager, Context context)
     {
-        cardManager.SetPlaceLayout(context);
+        cardManager.SetPostPostCoverLayout();
     }
 }

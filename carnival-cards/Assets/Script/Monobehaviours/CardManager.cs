@@ -36,7 +36,7 @@ public class CardManager : MonoBehaviour
 
         CreateNewCardDeck();
        
-        SetLayout(_rootContext);
+        SetCoverLayout();
     }
 
     public void CloseUpCardback(Context context)
@@ -111,7 +111,7 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    public void SetLayout(Context pressedContext)
+    public void SetPlaceLayout(Context pressedContext)
     {
         Context mainContext;
         List<Context> subContexts;
@@ -155,6 +155,32 @@ public class CardManager : MonoBehaviour
         }
         
         _layoutManager.SetPlaceLayout(mainContext, subContexts, backContext, discontext);
+    }
+
+    public void SetCoverLayout()
+    {
+        ResetExistingCardDeck();
+
+        _layoutManager.SetCoverLayout(_rootContext);
+    }
+
+    public void SetPostCoverLayout()
+    {
+        ResetExistingCardDeck();
+
+        DetachCard(_rootContext.ChildContexts[0]);
+
+        _layoutManager.SetPostCoverLayout(_rootContext);
+    }
+
+    public void SetPostPostCoverLayout()
+    {
+        ResetExistingCardDeck();
+
+        DetachCard(_rootContext.ChildContexts[0]);
+        DetachCard(_rootContext.ChildContexts[0].ChildContexts[0]);
+
+        _layoutManager.SetPostPostCoverLayout(_rootContext);
     }
 
     #region Attach / Detach

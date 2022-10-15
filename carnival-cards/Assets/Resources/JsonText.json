@@ -1,50 +1,62 @@
 {
-    "name": "Entryway",
-    "type": "PLACE",
+    "name": "Cover",
+    "type": "COVER",
     "childContexts": [
         {
-            "name": "Dining Room",
-            "type": "PLACE",
+            "name": "Introduction",
+            "type": "FLAVOR",
             "childContexts": [
                 {
-                    "name": "Kitchen",
+                    "name": "Entryway",
                     "type": "PLACE",
                     "childContexts": [
                         {
-                            "name": "Pantry",
+                            "name": "Dining Room",
                             "type": "PLACE",
                             "childContexts": [
                                 {
-                                    "name": "Mousehole",
+                                    "name": "Kitchen",
                                     "type": "PLACE",
                                     "childContexts": [
                                         {
-                                            "name": "Another Universe",
-                                            "type": "PLACE", 
-                                            "childContexts": []
-                                        },
-                                        {
-                                            "name": "Another Multiverse",
+                                            "name": "Pantry",
                                             "type": "PLACE",
-                                            "childContexts": []
+                                            "childContexts": [
+                                                {
+                                                    "name": "Mousehole",
+                                                    "type": "PLACE",
+                                                    "childContexts": [
+                                                        {
+                                                            "name": "Another Universe",
+                                                            "type": "PLACE",
+                                                            "childContexts": []
+                                                        },
+                                                        {
+                                                            "name": "Another Multiverse",
+                                                            "type": "PLACE",
+                                                            "childContexts": []
+                                                        }
+                                                    ]
+                                                }
+                                            ]
                                         }
                                     ]
+                                },
+                                {
+                                    "name": "Garden",
+                                    "type": "PLACE",
+                                    "childContexts": []
                                 }
                             ]
+                        },
+                        {
+                            "name": "Study",
+                            "type": "PLACE",
+                            "childContexts": []
                         }
                     ]
-                },
-                {
-                    "name": "Garden",
-                    "type": "PLACE",
-                    "childContexts": []
                 }
             ]
-        },
-        {
-            "name": "Study",
-            "type": "PLACE",
-            "childContexts": []
         }
     ]
 }

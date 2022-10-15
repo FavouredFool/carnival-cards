@@ -50,6 +50,48 @@ public class LayoutManager : MonoBehaviour
         }
     }
 
+    public void SetCoverLayout(Context rootContext)
+    {
+        Vector2 mainPos = new(0, 0);
+
+        rootContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPPOSTCOVER));
+        MoveCard(rootContext.GetCard(), mainPos);
+        
+    }
+
+    public void SetPostCoverLayout(Context rootContext)
+    {
+        Vector2 infoPos = new(0, 0);
+        Vector2 coverPos = new(-5, 3);
+
+        Context infoContext = rootContext.ChildContexts[0];
+
+        rootContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPCOVER));
+        infoContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPPOSTPOSTCOVER));
+
+        MoveCard(rootContext.GetCard(), coverPos);
+        MoveCard(infoContext.GetCard(), infoPos);
+    }
+
+    public void SetPostPostCoverLayout(Context rootContext)
+    {
+        Vector2 infoPos = new(-5, 0);
+        Vector2 coverPos = new(-5, 3);
+        Vector2 placePos = new(0, 0);
+
+        Context child = rootContext.ChildContexts[0];
+        Context childChild = child.ChildContexts[0];
+
+        rootContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPCOVER));
+        child.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.CLOSEUP));
+        childChild.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPTO));
+
+        MoveCard(rootContext.GetCard(), coverPos);
+        MoveCard(child.GetCard(), infoPos);
+        MoveCard(childChild.GetCard(), placePos);
+
+    }
+
     public void CenteredLayout(Card mainCard)
     {
         Vector2 mainPos = new Vector2(0f, 0f);
