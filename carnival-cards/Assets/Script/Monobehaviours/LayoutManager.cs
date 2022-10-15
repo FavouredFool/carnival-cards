@@ -6,8 +6,12 @@ public class LayoutManager : MonoBehaviour
 {
     public OnClickManager _onClickManager;
 
+    private Context _activeContext;
+
     public void SetPlaceLayout(Context mainCard, List<Context> subCards, Context backCard, Context discardCard)
     {
+        _activeContext = mainCard;
+
         Vector2 mainPos = new Vector2(-5f, 0f);
         Vector2 backPos = new Vector2(-5f, 3f);
         Vector2 discardPos = new Vector2(5f, 3f);
@@ -50,46 +54,35 @@ public class LayoutManager : MonoBehaviour
         }
     }
 
-    public void SetCoverLayout(Context rootContext)
+    public void SetCoverLayout(CardManager cardManager, Context rootContext)
     {
-        Vector2 mainPos = new(0, 0);
+        // Change based on prev activeContext
+        if (rootContext == _activeContext)
+        {
+            Vector2 mainPos = new(0, 0);
+            _activeContext = null;
 
-        rootContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPPOSTCOVER));
-        MoveCard(rootContext.GetCard(), mainPos);
-        
-    }
+            rootContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPCOVER));
+            MoveCard(rootContext.GetCard(), mainPos);
+        }
+        else
+        {
+            _activeContext = rootContext;
 
-    public void SetPostCoverLayout(Context rootContext)
-    {
-        Vector2 infoPos = new(0, 0);
-        Vector2 coverPos = new(-5, 3);
+            Vector2 infoPos = new(0, 0);
+            Vector2 coverPos = new(-5, 0);
 
-        Context infoContext = rootContext.ChildContexts[0];
+            Context childContext = rootContext.ChildContexts[0];
 
-        rootContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPCOVER));
-        infoContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPPOSTPOSTCOVER));
+            // Gotta be changed to loop
+            cardManager.DetachCard(childContext);
 
-        MoveCard(rootContext.GetCard(), coverPos);
-        MoveCard(infoContext.GetCard(), infoPos);
-    }
+            rootContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPCOVER));
+            childContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPTO));
 
-    public void SetPostPostCoverLayout(Context rootContext)
-    {
-        Vector2 infoPos = new(-5, 0);
-        Vector2 coverPos = new(-5, 3);
-        Vector2 placePos = new(0, 0);
-
-        Context child = rootContext.ChildContexts[0];
-        Context childChild = child.ChildContexts[0];
-
-        rootContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPCOVER));
-        child.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.CLOSEUP));
-        childChild.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPTO));
-
-        MoveCard(rootContext.GetCard(), coverPos);
-        MoveCard(child.GetCard(), infoPos);
-        MoveCard(childChild.GetCard(), placePos);
-
+            MoveCard(rootContext.GetCard(), coverPos);
+            MoveCard(childContext.GetCard(), infoPos);
+        }
     }
 
     public void CenteredLayout(Card mainCard)
@@ -127,5 +120,10 @@ public class LayoutManager : MonoBehaviour
         MoveCard(card, Random.insideUnitCircle * 3);
     }
     #endregion
+
+    public void SetActiveContext(Context activeContext)
+    {
+        _activeContext = activeContext;
+    }
 
 }

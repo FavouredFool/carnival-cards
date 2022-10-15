@@ -35,7 +35,8 @@ public class CardManager : MonoBehaviour
         _rootContext.InitContextRecursive(null, new List<int>(), 0);
 
         CreateNewCardDeck();
-       
+
+        _layoutManager.SetActiveContext(_rootContext);
         SetCoverLayout();
     }
 
@@ -161,27 +162,9 @@ public class CardManager : MonoBehaviour
     {
         ResetExistingCardDeck();
 
-        _layoutManager.SetCoverLayout(_rootContext);
+        _layoutManager.SetCoverLayout(this, _rootContext);
     }
 
-    public void SetPostCoverLayout()
-    {
-        ResetExistingCardDeck();
-
-        DetachCard(_rootContext.ChildContexts[0]);
-
-        _layoutManager.SetPostCoverLayout(_rootContext);
-    }
-
-    public void SetPostPostCoverLayout()
-    {
-        ResetExistingCardDeck();
-
-        DetachCard(_rootContext.ChildContexts[0]);
-        DetachCard(_rootContext.ChildContexts[0].ChildContexts[0]);
-
-        _layoutManager.SetPostPostCoverLayout(_rootContext);
-    }
 
     #region Attach / Detach
     public void DetachCard(Context contextToRemove)
@@ -242,5 +225,9 @@ public class CardManager : MonoBehaviour
         return _closeUpContext;
     }
 
+    public Context GetRootContext()
+    {
+        return _rootContext;
+    }
 
 }
