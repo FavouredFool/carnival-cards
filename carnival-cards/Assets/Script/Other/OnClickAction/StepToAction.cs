@@ -6,6 +6,6 @@ public class StepToAction : IOnClickAction
 {
     public void OnClick(CardManager cardManager, Context context)
     {
-        cardManager.SetPlaceLayout(context);
+        cardManager.SetLayout(context);
     }
 }

@@ -1,89 +1,114 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static OnClickManager;
 
 public class LayoutManager : MonoBehaviour
 {
     public OnClickManager _onClickManager;
+    public CardManager _cardManager;
 
     private Context _activeContext;
 
-    public void SetPlaceLayout(Context mainCard, List<Context> subCards, Context backCard, Context discardCard)
+    Vector2 zeroPos = Vector2.zero;
+    Vector2 mainPos = new(-5, 0);
+    Vector2 backPos = new(-5, 3);
+    Vector2 discardPos = new(5, 3);
+
+    public void SetPlaceLayout(Context mainCardContext)
     {
-        _activeContext = mainCard;
+        _activeContext = mainCardContext;
 
-        Vector2 mainPos = new Vector2(-5f, 0f);
-        Vector2 backPos = new Vector2(-5f, 3f);
-        Vector2 discardPos = new Vector2(5f, 3f);
-
-        if (mainCard != null)
+        // Main
+        if (mainCardContext != null)
         {
-            mainCard.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.CLOSEUP));
-        }
-        
-        if (backCard != null)
-        {
-            backCard.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPTO));
+            DetachCard(mainCardContext);
+            mainCardContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.CLOSEUP));
+            MoveCard(mainCardContext.GetCard(), mainPos);
         }
 
-        for (int i = 0; i < subCards.Count; i++)
+        // Children
+        List<Context> subContexts = mainCardContext.ChildContexts;
+        foreach (Context subContext in subContexts)
         {
-            subCards[i].SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPTO));
+            DetachCard(subContext);
+            subContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.STEPTO));
+        }
+        FanOutCardListAtPos(subContexts);
+
+        //Back
+        Context backContext = mainCardContext.GetParentContext();
+        if (backContext != null)
+        {
+            DetachCard(backContext);
+            backContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.STEPTO));
+            MoveCard(backContext.GetCard(), backPos);
         }
 
-        if (discardCard != null)
+        //Discard
+        Context rootContext = _cardManager.GetRootContext();
+        if (rootContext != mainCardContext && rootContext != backContext)
         {
-            discardCard.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.NOTHING));
-        }
-
-        if (mainCard != null)
-        {
-            MoveCard(mainCard.GetCard(), mainPos);
-        }
-
-        FanOutCardListAtPos(subCards);
-
-        if (backCard != null)
-        {
-            MoveCard(backCard.GetCard(), backPos);
-        }
-
-        if (discardCard != null)
-        {
-            MoveCard(discardCard.GetCard(), discardPos);
+            Context discardContext = rootContext;
+            DetachCard(discardContext);
+            discardContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.NOTHING));
+            MoveCard(discardContext.GetCard(), discardPos);
         }
     }
 
-    public void SetCoverLayout(CardManager cardManager, Context rootContext)
+    public void SetCoverLayout(Context rootContext)
     {
-        // Change based on prev activeContext
         if (rootContext == _activeContext)
         {
-            Vector2 mainPos = new(0, 0);
             _activeContext = null;
 
-            rootContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPCOVER));
-            MoveCard(rootContext.GetCard(), mainPos);
+            // Root
+            rootContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPTO));
+            MoveCard(rootContext.GetCard(), zeroPos);
         }
         else
         {
             _activeContext = rootContext;
 
-            Vector2 infoPos = new(0, 0);
-            Vector2 coverPos = new(-5, 0);
+            // Root
+            rootContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPTO));
+            MoveCard(rootContext.GetCard(), mainPos);
 
-            Context childContext = rootContext.ChildContexts[0];
-
-            // Gotta be changed to loop
-            cardManager.DetachCard(childContext);
-
-            rootContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPCOVER));
-            childContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPTO));
-
-            MoveCard(rootContext.GetCard(), coverPos);
-            MoveCard(childContext.GetCard(), infoPos);
+            // Children
+            foreach (Context subContext in rootContext.ChildContexts)
+            {
+                DetachCard(subContext);
+                subContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.STEPTO));
+            }
+            FanOutCardListAtPos(rootContext.ChildContexts);
         }
     }
+
+    public void DetachCard(Context contextToRemove)
+    {
+        if (contextToRemove.GetCard().GetIsAttached())
+        {
+            contextToRemove.GetCard().SetParentCard(null);
+
+            _cardManager.GetTopContextList().Add(contextToRemove);
+
+            contextToRemove.GetCard().SynchronizeVisual();
+        }
+    }
+
+    /*
+    public void AttachCard(Context contextToAttach, Context baseContext)
+    {
+        if (!_cardManager.GetTopContextList().Contains(contextToAttach))
+        {
+            Debug.LogWarning("FEHLER");
+        }
+
+        baseContext.AttachCardAtEnd(contextToAttach);
+
+        _cardManager.GetTopContextList().Remove(contextToAttach);
+    }
+    */
 
     public void CenteredLayout(Card mainCard)
     {

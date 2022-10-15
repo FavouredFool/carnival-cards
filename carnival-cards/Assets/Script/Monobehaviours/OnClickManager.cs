@@ -9,8 +9,6 @@ public class OnClickManager : MonoBehaviour
     private IOnClickAction _stepToAction;
     private IOnClickAction _nothingAction;
     private IOnClickAction _lookAtAction;
-    private IOnClickAction _stepNextAction;
-    private IOnClickAction _stepCoverAction;
 
 
     public void Awake()
@@ -18,11 +16,9 @@ public class OnClickManager : MonoBehaviour
         _stepToAction = new StepToAction();
         _nothingAction = new NothingAction();
         _lookAtAction = new CloseUpAction();
-        _stepNextAction = new StepNextAction();
-        _stepCoverAction = new StepCoverAction();
     }
 
-    public enum OnClickAction { STEPTO, CLOSEUP, STEPNEXT, STEPCOVER, NOTHING }
+    public enum OnClickAction { STEPTO, CLOSEUP, NOTHING }
 
 
     public IOnClickAction GetActionFromOnClickAction(OnClickAction actionEnum)
@@ -34,12 +30,6 @@ public class OnClickManager : MonoBehaviour
 
             case OnClickAction.CLOSEUP:
                 return _lookAtAction;
-
-            case OnClickAction.STEPNEXT:
-                return _stepNextAction;
-
-            case OnClickAction.STEPCOVER:
-                return _stepCoverAction;
 
             case OnClickAction.NOTHING:
                 return _nothingAction;
