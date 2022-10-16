@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 using static OnClickManager;
+using static CardTypeManager;
 
 public class LayoutManager : MonoBehaviour
 {
@@ -14,6 +16,7 @@ public class LayoutManager : MonoBehaviour
     Vector2 mainPos = new(-5, 0);
     Vector2 backPos = new(-5, 3);
     Vector2 discardPos = new(5, 3);
+    Vector2 actionPos = new(-5, -2f);
 
     public void SetPlaceLayout(Context placeContext)
     {
@@ -56,6 +59,27 @@ public class LayoutManager : MonoBehaviour
         }
     }
 
+    private Context GetActionContext(Context mainContext)
+    {
+        Context actionContext = null;
+        // Find INVESTIGATE CARD
+        foreach (Context context in mainContext.ChildContexts)
+        {
+            if (context.Type == CardType.INVESTIGATION)
+            {
+                actionContext = context;
+                break;
+            }
+        }
+
+        if (actionContext == null)
+        {
+            Debug.LogWarning("FEHLER: KEIN INVESTIGATE WURDE GEFUNDEN");
+        }
+
+        return actionContext;
+    }
+
     public void SetItemLayout(Context itemContext)
     {
         _activeContext = itemContext;
@@ -68,8 +92,14 @@ public class LayoutManager : MonoBehaviour
             MoveCard(itemContext.GetCard(), mainPos);
         }
 
+        // Action
+        Context actionContext = GetActionContext(itemContext);
+        DetachCard(actionContext);
+        actionContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.STEPTO));
+        MoveCard(actionContext.GetCard(), actionPos);
+
         // Children
-        List<Context> subContexts = itemContext.ChildContexts;
+        List<Context> subContexts = itemContext.ChildContexts.Where(e => e != actionContext).ToList();
         foreach (Context subContext in subContexts)
         {
             DetachCard(subContext);
@@ -95,6 +125,8 @@ public class LayoutManager : MonoBehaviour
             discardContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.NOTHING));
             MoveCard(discardContext.GetCard(), discardPos);
         }
+
+        
     }
 
     public void SetCoverLayout(Context rootContext)
@@ -161,18 +193,12 @@ public class LayoutManager : MonoBehaviour
     {
         for (int i = 0; i < cardList.Count; i++)
         {
+            if (cardList[i].Type == CardTypeManager.CardType.INVESTIGATION) {
+                continue;
+            }
+
             MoveCard(cardList[i].GetCard(), new Vector2(2f * i, 0f));
         }
-    }
-
-    public void SetCardsInLayout()
-    {
-
-    }
-
-    public void GetLayoutFromCardType()
-    {
-
     }
 
     #region Move Card

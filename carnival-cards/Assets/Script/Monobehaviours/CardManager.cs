@@ -128,6 +128,9 @@ public class CardManager : MonoBehaviour
             case CardType.PLACE:
                 _layoutManager.SetPlaceLayout(pressedContext);
                 break;
+            case CardType.INVESTIGATION:
+                _layoutManager.SetPlaceLayout(pressedContext);
+                break;
         }
     }
 

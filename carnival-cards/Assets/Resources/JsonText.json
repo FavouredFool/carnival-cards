@@ -59,13 +59,23 @@
                             "type": "THING",
                             "childContexts": [
                                 {
+                                    "name": "Investigate!",
+                                    "type": "INVESTIGATION",
+                                    "childContexts": []
+                                },
+                                {
                                     "name": "Book",
                                     "type": "THING",
                                     "childContexts": [
                                         {
-                                        "name": "Secret Room",
-                                        "type": "PLACE",
-                                        "childContexts": []
+                                            "name": "Investigate!",
+                                            "type": "INVESTIGATION",
+                                            "childContexts": []
+                                        },
+                                        {
+                                            "name": "Secret Room",
+                                            "type": "PLACE",
+                                            "childContexts": []
                                         }
                                     ]
                                 },
@@ -74,9 +84,20 @@
                                     "type": "THING",
                                     "childContexts": [
                                         {
+                                            "name": "Investigate!",
+                                            "type": "INVESTIGATION",
+                                            "childContexts": []
+                                        },
+                                        {
                                             "name": "Nail",
                                             "type": "THING",
-                                            "childContexts": []
+                                            "childContexts": [
+                                                {
+                                                    "name": "Investigate!",
+                                                    "type": "INVESTIGATION",
+                                                    "childContexts": []
+                                                }
+                                            ]
                                         }
                                     ]
                                 }

@@ -16,7 +16,6 @@ public class Context
     public List<Context> ChildContexts { get; set; }
 
 
-
     private Card _card;
 
     private List<int> _identifier;
