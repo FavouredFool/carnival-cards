@@ -122,6 +122,9 @@ public class CardManager : MonoBehaviour
             case CardType.FLAVOR:
                 _layoutManager.SetPlaceLayout(pressedContext);
                 break;
+            case CardType.THING:
+                _layoutManager.SetItemLayout(pressedContext);
+                break;
             case CardType.PLACE:
                 _layoutManager.SetPlaceLayout(pressedContext);
                 break;

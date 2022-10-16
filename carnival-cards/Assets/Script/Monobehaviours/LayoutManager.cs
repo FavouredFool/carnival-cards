@@ -15,20 +15,20 @@ public class LayoutManager : MonoBehaviour
     Vector2 backPos = new(-5, 3);
     Vector2 discardPos = new(5, 3);
 
-    public void SetPlaceLayout(Context mainCardContext)
+    public void SetPlaceLayout(Context placeContext)
     {
-        _activeContext = mainCardContext;
+        _activeContext = placeContext;
 
         // Main
-        if (mainCardContext != null)
+        if (placeContext != null)
         {
-            DetachCard(mainCardContext);
-            mainCardContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.CLOSEUP));
-            MoveCard(mainCardContext.GetCard(), mainPos);
+            DetachCard(placeContext);
+            placeContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.CLOSEUP));
+            MoveCard(placeContext.GetCard(), mainPos);
         }
 
         // Children
-        List<Context> subContexts = mainCardContext.ChildContexts;
+        List<Context> subContexts = placeContext.ChildContexts;
         foreach (Context subContext in subContexts)
         {
             DetachCard(subContext);
@@ -37,7 +37,7 @@ public class LayoutManager : MonoBehaviour
         FanOutCardListAtPos(subContexts);
 
         //Back
-        Context backContext = mainCardContext.GetParentContext();
+        Context backContext = placeContext.GetParentContext();
         if (backContext != null)
         {
             DetachCard(backContext);
@@ -47,7 +47,48 @@ public class LayoutManager : MonoBehaviour
 
         //Discard
         Context rootContext = _cardManager.GetRootContext();
-        if (rootContext != mainCardContext && rootContext != backContext)
+        if (rootContext != placeContext && rootContext != backContext)
+        {
+            Context discardContext = rootContext;
+            DetachCard(discardContext);
+            discardContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.NOTHING));
+            MoveCard(discardContext.GetCard(), discardPos);
+        }
+    }
+
+    public void SetItemLayout(Context itemContext)
+    {
+        _activeContext = itemContext;
+
+        // Main
+        if (itemContext != null)
+        {
+            DetachCard(itemContext);
+            itemContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.CLOSEUP));
+            MoveCard(itemContext.GetCard(), mainPos);
+        }
+
+        // Children
+        List<Context> subContexts = itemContext.ChildContexts;
+        foreach (Context subContext in subContexts)
+        {
+            DetachCard(subContext);
+            subContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.STEPTO));
+        }
+        FanOutCardListAtPos(subContexts);
+
+        //Back
+        Context backContext = itemContext.GetParentContext();
+        if (backContext != null)
+        {
+            DetachCard(backContext);
+            backContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.STEPTO));
+            MoveCard(backContext.GetCard(), backPos);
+        }
+
+        //Discard
+        Context rootContext = _cardManager.GetRootContext();
+        if (rootContext != itemContext && rootContext != backContext)
         {
             Context discardContext = rootContext;
             DetachCard(discardContext);

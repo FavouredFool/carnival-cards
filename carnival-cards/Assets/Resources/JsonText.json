@@ -53,6 +53,34 @@
                             "name": "Study",
                             "type": "PLACE",
                             "childContexts": []
+                        },
+                        {
+                            "name": "Bookshelf",
+                            "type": "THING",
+                            "childContexts": [
+                                {
+                                    "name": "Book",
+                                    "type": "THING",
+                                    "childContexts": [
+                                        {
+                                        "name": "Secret Room",
+                                        "type": "PLACE",
+                                        "childContexts": []
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "Hollow Knight",
+                                    "type": "THING",
+                                    "childContexts": [
+                                        {
+                                            "name": "Nail",
+                                            "type": "THING",
+                                            "childContexts": []
+                                        }
+                                    ]
+                                }
+                            ]
                         }
                     ]
                 }

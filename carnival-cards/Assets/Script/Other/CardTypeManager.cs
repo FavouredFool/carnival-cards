@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class CardTypeManager
 {
-    public enum CardType { COVER, FLAVOR, PLACE, ITEM, PERSON, INFO, SENSE, INVESTIGATION }
+    public enum CardType { COVER, FLAVOR, PLACE, THING, ITEM, PERSON, INFO, SENSE, INVESTIGATION }
 
     public static Color GetColorFromCardType(CardType cardType)
     {
@@ -16,8 +16,10 @@ public static class CardTypeManager
                 return Color.gray;
             case CardType.PLACE:
                 return Color.green;
-            case CardType.ITEM:
+            case CardType.THING:
                 return Color.blue;
+            case CardType.ITEM:
+                return Color.red;
             case CardType.PERSON:
                 return Color.red;
             case CardType.INFO:
