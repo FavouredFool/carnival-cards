@@ -24,6 +24,15 @@ public class Context
 
     private IOnClickAction _onClickAction;
 
+    public Context(string name, CardType type)
+    {
+        Name = name;
+        Type = type;
+        ChildContexts = new();
+        _parentContext = null;
+        _onClickAction = null;
+        _identifier = new() { 0 };
+    }
 
     public void InitContextRecursive(Context parentContext, List<int> upperIdentifier, int index)
     {
@@ -67,7 +76,7 @@ public class Context
             Debug.Log("FEHLER: BASIS ZU TIEF");
             return;
         }
-
+        // NOT TESTED ATM
         AttachCardRecursive(contextToAttach, GetIdentifier().Count);
     }
 
@@ -90,7 +99,6 @@ public class Context
                 if (!contextToAttach.ChildContexts[i].GetCard().GetIsAttached())
                 {
                     GetCard().AttachCardDirectly(contextToAttach.ChildContexts[i].GetCard());
-
                 }
                 else
                 {

@@ -16,7 +16,8 @@ public class LayoutManager : MonoBehaviour
     Vector2 mainPos = new(-5, 0);
     Vector2 backPos = new(-5, 3);
     Vector2 discardPos = new(5, 3);
-    Vector2 actionPos = new(-5, -2f);
+    Vector2 actionPos = new(-5, -2);
+    Vector2 inventoryPos = new(6, -3);
 
     public void SetBasicLayout(Context mainContext)
     {
@@ -101,10 +102,16 @@ public class LayoutManager : MonoBehaviour
         }
     }
 
+    public void SetInventory(Context inventoryContext)
+    {
+        inventoryContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.NOTHING));
+        MoveCard(inventoryContext.GetCard(), inventoryPos);
+    }
+
     private Context GetActionContext(Context mainContext)
     {
         Context actionContext = null;
-        // Find INVESTIGATE CARD
+
         foreach (Context context in mainContext.ChildContexts)
         {
             if (context.Type == CardType.INVESTIGATION)

@@ -21,7 +21,7 @@ public class CardManager : MonoBehaviour
     private Transform _closeUpPosition;
 
     private List<Context> _topContextList = new();
-    private List<Context> _inventoryContextList = new();
+    private Context _inventoryContext = null;
     private Context _closeUpContext = null;
 
     private Context _rootContext;
@@ -31,6 +31,8 @@ public class CardManager : MonoBehaviour
 
     private void Start()
     {
+
+        // Deck
         jsonReader = new JsonReader();
         
         _rootContext = jsonReader.ReadJsonForContext(_jsonText);
@@ -40,6 +42,12 @@ public class CardManager : MonoBehaviour
 
         _layoutManager.SetActiveContext(_rootContext);
         SetLayout(_rootContext);
+
+        // Inventory
+
+        _inventoryContext = new Context("Inventory", CardType.INVENTORY);
+        CreateCardAddToCard(null, _inventoryContext);
+        _layoutManager.SetInventory(_inventoryContext);
     }
 
     private void Update()
@@ -49,12 +57,7 @@ public class CardManager : MonoBehaviour
             topContext.SynchronizeHeight();
         }
 
-        for (int i = 0; i < _inventoryContextList.Count; i++)
-        {
-            _layoutManager.MoveCard(_inventoryContextList[i].GetCard(), new Vector2(5 - 2f * i, -3f));
-        }
-
-
+        _inventoryContext.SynchronizeHeight();
     }
 
     public void CloseUpCardback(Context context)
@@ -66,7 +69,22 @@ public class CardManager : MonoBehaviour
 
     public Context FindContextFromCard(Card card)
     {
-        return _rootContext.FindContextFromCard(card);
+        Context context = _rootContext.FindContextFromCard(card);
+
+        if (context != null)
+        {
+            return context;
+        }
+
+        context = _inventoryContext.FindContextFromCard(card);
+
+        if (context != null)
+        {
+            return context;
+        }
+
+        Debug.LogWarning("ERROR");
+        return null;
     }
 
     private void CreateNewCardDeck()
@@ -144,8 +162,11 @@ public class CardManager : MonoBehaviour
 
     public void PickUp(Context context)
     {
-        RemoveContext(context);
-        _inventoryContextList.Add(context);
+        DetachContext(context);
+
+        context.SetIdentifier(new() { 0, _inventoryContext.ChildContexts.Count });
+
+        AttachContextToContext(context, _inventoryContext);
     }
 
 
@@ -169,7 +190,7 @@ public class CardManager : MonoBehaviour
     #endregion
 
 
-    private void RemoveContext(Context context)
+    private void DetachContext(Context context)
     {
         Context parentContext = context.GetParentContext();
         List<Context> childContexts = context.ChildContexts;
@@ -183,8 +204,15 @@ public class CardManager : MonoBehaviour
         parentContext.ChildContexts.Remove(context);
         context.SetParentContext(null);
         _topContextList.Add(context);
+    }
 
+    private void AttachContextToContext(Context toAttach, Context basis)
+    {
+        _topContextList.Remove(toAttach);       
+        basis.ChildContexts.Add(toAttach);
+        toAttach.SetParentContext(basis);
 
+        toAttach.GetCard().SetParentCard(_inventoryContext.GetCard());
     }
 
     public Transform GetCloseUpPosition()
