@@ -102,10 +102,31 @@ public class LayoutManager : MonoBehaviour
         }
     }
 
-    public void SetInventory(Context inventoryContext)
+    public void SetInventoryContext(Context inventoryContext)
     {
-        inventoryContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.NOTHING));
+        inventoryContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.INVENTORY));
         MoveCard(inventoryContext.GetCard(), inventoryPos);
+    }
+
+    public void ToggleInventory(Context inventoryContext, bool inventoryIsOpen)
+    {
+        if (inventoryIsOpen)
+        {
+            foreach (Context subContext in inventoryContext.ChildContexts)
+            {
+                DetachCard(subContext);
+                subContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.NOTHING));
+            }
+            FanOutInventory(inventoryContext.ChildContexts);
+        }
+    }
+
+    private void FanOutInventory(List<Context> invlist)
+    {
+        for (int i = 0; i < invlist.Count; i++)
+        {
+            MoveCard(invlist[i].GetCard(), new Vector2(4 - (2 * i), -3f));
+        }
     }
 
     private Context GetActionContext(Context mainContext)
@@ -154,7 +175,7 @@ public class LayoutManager : MonoBehaviour
     {
         for (int i = 0; i < cardList.Count; i++)
         {
-            if (cardList[i].Type == CardTypeManager.CardType.INVESTIGATION) {
+            if (cardList[i].Type == CardType.INVESTIGATION) {
                 continue;
             }
 

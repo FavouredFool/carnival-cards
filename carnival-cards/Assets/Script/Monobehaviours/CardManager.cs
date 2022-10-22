@@ -28,6 +28,8 @@ public class CardManager : MonoBehaviour
 
     private JsonReader jsonReader;
 
+    private bool _inventoryIsOpen = false;
+
 
     private void Start()
     {
@@ -44,10 +46,9 @@ public class CardManager : MonoBehaviour
         SetLayout(_rootContext);
 
         // Inventory
-
         _inventoryContext = new Context("Inventory", CardType.INVENTORY);
         CreateCardAddToCard(null, _inventoryContext);
-        _layoutManager.SetInventory(_inventoryContext);
+        _layoutManager.SetInventoryContext(_inventoryContext);
     }
 
     private void Update()
@@ -102,6 +103,11 @@ public class CardManager : MonoBehaviour
         _topContextList.Clear();
         _topContextList.Add(_rootContext);
         _closeUpContext = null;
+    }
+
+    private void ResetInventory()
+    {
+        ResetCardRepeating(_inventoryContext);
     }
 
     private void ResetCardRepeating(Context context)
@@ -167,6 +173,20 @@ public class CardManager : MonoBehaviour
         context.SetIdentifier(new() { 0, _inventoryContext.ChildContexts.Count });
 
         AttachContextToContext(context, _inventoryContext);
+
+        ToggleInventory(false);
+    }
+
+    public void ToggleInventory(bool change)
+    {
+        ResetInventory();
+
+        if (change)
+        {
+            _inventoryIsOpen = !_inventoryIsOpen;
+        }
+
+        _layoutManager.ToggleInventory(_inventoryContext, _inventoryIsOpen);
     }
 
 
