@@ -21,6 +21,7 @@ public class CardManager : MonoBehaviour
     private Transform _closeUpPosition;
 
     private List<Context> _topContextList = new();
+    private List<Context> _inventoryContextList = new();
     private Context _closeUpContext = null;
 
     private Context _rootContext;
@@ -47,6 +48,13 @@ public class CardManager : MonoBehaviour
         {
             topContext.SynchronizeHeight();
         }
+
+        for (int i = 0; i < _inventoryContextList.Count; i++)
+        {
+            _layoutManager.MoveCard(_inventoryContextList[i].GetCard(), new Vector2(5 - 2f * i, -3f));
+        }
+
+
     }
 
     public void CloseUpCardback(Context context)
@@ -120,18 +128,24 @@ public class CardManager : MonoBehaviour
                 _layoutManager.SetCoverLayout(pressedContext);
                 break;
             case CardType.FLAVOR:
-                _layoutManager.SetPlaceLayout(pressedContext);
+                _layoutManager.SetBasicLayout(pressedContext);
                 break;
             case CardType.THING:
-                _layoutManager.SetItemLayout(pressedContext);
+                _layoutManager.SetBasicLayout(pressedContext);
                 break;
             case CardType.PLACE:
-                _layoutManager.SetPlaceLayout(pressedContext);
+                _layoutManager.SetBasicLayout(pressedContext);
                 break;
             case CardType.INVESTIGATION:
-                _layoutManager.SetPlaceLayout(pressedContext);
+                _layoutManager.SetBasicLayout(pressedContext);
                 break;
         }
+    }
+
+    public void PickUp(Context context)
+    {
+        RemoveContext(context);
+        _inventoryContextList.Add(context);
     }
 
 
@@ -153,6 +167,25 @@ public class CardManager : MonoBehaviour
         return _cardFactory.CreateNewInstance(context);
     }
     #endregion
+
+
+    private void RemoveContext(Context context)
+    {
+        Context parentContext = context.GetParentContext();
+        List<Context> childContexts = context.ChildContexts;
+
+        if (parentContext == null || childContexts.Count != 0)
+        {
+            Debug.Log("ERROR: CANT BE REMOVED");
+            return;
+        }
+
+        parentContext.ChildContexts.Remove(context);
+        context.SetParentContext(null);
+        _topContextList.Add(context);
+
+
+    }
 
     public Transform GetCloseUpPosition()
     {

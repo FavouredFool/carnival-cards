@@ -61,7 +61,40 @@
                                 {
                                     "name": "Investigate!",
                                     "type": "INVESTIGATION",
-                                    "childContexts": []
+                                    "childContexts": [
+                                        
+                                {
+                                    "name": "Hollow Knight",
+                                    "type": "THING",
+                                    "childContexts": [
+                                        {
+                                            "name": "Investigate!",
+                                            "type": "INVESTIGATION",
+                                            "childContexts": []
+                                        },
+                                        {
+                                            "name": "Nail",
+                                            "type": "ITEM",
+                                            "childContexts": []
+                                        },
+                                        {
+                                            "name": "Nail",
+                                            "type": "ITEM",
+                                            "childContexts": []
+                                        },
+                                        {
+                                            "name": "Nail",
+                                            "type": "ITEM",
+                                            "childContexts": []
+                                        },
+                                        {
+                                            "name": "Nail",
+                                            "type": "ITEM",
+                                            "childContexts": []
+                                        }
+                                    ]
+                                }
+                                    ]
                                 },
                                 {
                                     "name": "Book",
@@ -76,28 +109,6 @@
                                             "name": "Secret Room",
                                             "type": "PLACE",
                                             "childContexts": []
-                                        }
-                                    ]
-                                },
-                                {
-                                    "name": "Hollow Knight",
-                                    "type": "THING",
-                                    "childContexts": [
-                                        {
-                                            "name": "Investigate!",
-                                            "type": "INVESTIGATION",
-                                            "childContexts": []
-                                        },
-                                        {
-                                            "name": "Nail",
-                                            "type": "THING",
-                                            "childContexts": [
-                                                {
-                                                    "name": "Investigate!",
-                                                    "type": "INVESTIGATION",
-                                                    "childContexts": []
-                                                }
-                                            ]
                                         }
                                     ]
                                 }

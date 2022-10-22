@@ -18,97 +18,43 @@ public class LayoutManager : MonoBehaviour
     Vector2 discardPos = new(5, 3);
     Vector2 actionPos = new(-5, -2f);
 
-    public void SetPlaceLayout(Context placeContext)
+    public void SetBasicLayout(Context mainContext)
     {
-        _activeContext = placeContext;
+        _activeContext = mainContext;
 
         // Main
-        if (placeContext != null)
-        {
-            DetachCard(placeContext);
-            placeContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.CLOSEUP));
-            MoveCard(placeContext.GetCard(), mainPos);
-        }
-
-        // Children
-        List<Context> subContexts = placeContext.ChildContexts;
-        foreach (Context subContext in subContexts)
-        {
-            DetachCard(subContext);
-            subContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.STEPTO));
-        }
-        FanOutCardListAtPos(subContexts);
-
-        //Back
-        Context backContext = placeContext.GetParentContext();
-        if (backContext != null)
-        {
-            DetachCard(backContext);
-            backContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.STEPTO));
-            MoveCard(backContext.GetCard(), backPos);
-        }
-
-        //Discard
-        Context rootContext = _cardManager.GetRootContext();
-        if (rootContext != placeContext && rootContext != backContext)
-        {
-            Context discardContext = rootContext;
-            DetachCard(discardContext);
-            discardContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.NOTHING));
-            MoveCard(discardContext.GetCard(), discardPos);
-        }
-    }
-
-    private Context GetActionContext(Context mainContext)
-    {
-        Context actionContext = null;
-        // Find INVESTIGATE CARD
-        foreach (Context context in mainContext.ChildContexts)
-        {
-            if (context.Type == CardType.INVESTIGATION)
-            {
-                actionContext = context;
-                break;
-            }
-        }
-
-        if (actionContext == null)
-        {
-            Debug.LogWarning("FEHLER: KEIN INVESTIGATE WURDE GEFUNDEN");
-        }
-
-        return actionContext;
-    }
-
-    public void SetItemLayout(Context itemContext)
-    {
-        _activeContext = itemContext;
-
-        // Main
-        if (itemContext != null)
-        {
-            DetachCard(itemContext);
-            itemContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.CLOSEUP));
-            MoveCard(itemContext.GetCard(), mainPos);
-        }
+        DetachCard(mainContext);
+        mainContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.CLOSEUP));
+        MoveCard(mainContext.GetCard(), mainPos);
 
         // Action
-        Context actionContext = GetActionContext(itemContext);
-        DetachCard(actionContext);
-        actionContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.STEPTO));
-        MoveCard(actionContext.GetCard(), actionPos);
-
+        Context actionContext = GetActionContext(mainContext);
+        if (actionContext != null)
+        {
+            DetachCard(actionContext);
+            actionContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.STEPTO));
+            MoveCard(actionContext.GetCard(), actionPos);
+        }
+        
         // Children
-        List<Context> subContexts = itemContext.ChildContexts.Where(e => e != actionContext).ToList();
+        List<Context> subContexts = mainContext.ChildContexts.Where(e => e != actionContext).ToList();
         foreach (Context subContext in subContexts)
         {
             DetachCard(subContext);
-            subContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.STEPTO));
+            if (subContext.Type == CardType.ITEM)
+            {
+                subContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.PICKUP));
+            }
+            else
+            {
+                subContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.STEPTO));
+            }
+
         }
         FanOutCardListAtPos(subContexts);
 
         //Back
-        Context backContext = itemContext.GetParentContext();
+        Context backContext = mainContext.GetParentContext();
         if (backContext != null)
         {
             DetachCard(backContext);
@@ -118,15 +64,13 @@ public class LayoutManager : MonoBehaviour
 
         //Discard
         Context rootContext = _cardManager.GetRootContext();
-        if (rootContext != itemContext && rootContext != backContext)
+        if (rootContext != mainContext && rootContext != backContext)
         {
             Context discardContext = rootContext;
             DetachCard(discardContext);
             discardContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.NOTHING));
             MoveCard(discardContext.GetCard(), discardPos);
         }
-
-        
     }
 
     public void SetCoverLayout(Context rootContext)
@@ -145,7 +89,7 @@ public class LayoutManager : MonoBehaviour
 
             // Root
             rootContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPTO));
-            MoveCard(rootContext.GetCard(), mainPos);
+            MoveCard(rootContext.GetCard(), backPos);
 
             // Children
             foreach (Context subContext in rootContext.ChildContexts)
@@ -155,6 +99,22 @@ public class LayoutManager : MonoBehaviour
             }
             FanOutCardListAtPos(rootContext.ChildContexts);
         }
+    }
+
+    private Context GetActionContext(Context mainContext)
+    {
+        Context actionContext = null;
+        // Find INVESTIGATE CARD
+        foreach (Context context in mainContext.ChildContexts)
+        {
+            if (context.Type == CardType.INVESTIGATION)
+            {
+                actionContext = context;
+                break;
+            }
+        }
+
+        return actionContext;
     }
 
     public void DetachCard(Context contextToRemove)
@@ -183,12 +143,6 @@ public class LayoutManager : MonoBehaviour
     }
     */
 
-    public void CenteredLayout(Card mainCard)
-    {
-        Vector2 mainPos = new Vector2(0f, 0f);
-        MoveCard(mainCard, mainPos);
-    }
-
     public void FanOutCardListAtPos(List<Context> cardList)
     {
         for (int i = 0; i < cardList.Count; i++)
@@ -201,17 +155,10 @@ public class LayoutManager : MonoBehaviour
         }
     }
 
-    #region Move Card
     public void MoveCard(Card card, Vector2 newPosition)
     {
         card.transform.localPosition = new Vector3(newPosition.x, card.transform.position.y, newPosition.y);
     }
-
-    public void MoveCardRandom(Card card)
-    {
-        MoveCard(card, Random.insideUnitCircle * 3);
-    }
-    #endregion
 
     public void SetActiveContext(Context activeContext)
     {
