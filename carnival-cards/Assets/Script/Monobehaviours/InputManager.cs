@@ -16,7 +16,7 @@ public class InputManager : MonoBehaviour
             if (_cardManager.GetCloseUpContext() != null)
             {
                 // Zoomed in, zoom out with click
-                _cardManager.SetLayout(_cardManager.GetCloseUpContext());
+                _cardManager.InitSetLayout(_cardManager.GetCloseUpContext());
             }
             else
             {

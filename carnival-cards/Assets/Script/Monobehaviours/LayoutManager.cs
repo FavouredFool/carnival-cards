@@ -10,7 +10,7 @@ public class LayoutManager : MonoBehaviour
     public OnClickManager _onClickManager;
     public CardManager _cardManager;
 
-    private Context _activeContext;
+    
 
     Vector2 zeroPos = Vector2.zero;
     Vector2 mainPos = new(-5, 0);
@@ -21,7 +21,7 @@ public class LayoutManager : MonoBehaviour
 
     public void SetBasicLayout(Context mainContext)
     {
-        _activeContext = mainContext;
+        _cardManager.SetActiveContext(mainContext);
 
         // Main
         DetachCard(mainContext);
@@ -56,12 +56,10 @@ public class LayoutManager : MonoBehaviour
 
         //Back
         Context backContext = mainContext.GetParentContext();
-        if (backContext != null)
-        {
-            DetachCard(backContext);
-            backContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.STEPTO));
-            MoveCard(backContext.GetCard(), backPos);
-        }
+        DetachCard(backContext);
+        backContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.STEPTO));
+        MoveCard(backContext.GetCard(), backPos);
+        
 
         //Discard
         Context rootContext = _cardManager.GetRootContext();
@@ -76,9 +74,9 @@ public class LayoutManager : MonoBehaviour
 
     public void SetCoverLayout(Context rootContext)
     {
-        if (rootContext == _activeContext)
+        if (rootContext == _cardManager.GetActiveContext())
         {
-            _activeContext = null;
+            _cardManager.SetActiveContext(null);
 
             // Root
             rootContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPTO));
@@ -86,7 +84,7 @@ public class LayoutManager : MonoBehaviour
         }
         else
         {
-            _activeContext = rootContext;
+            _cardManager.SetActiveContext(rootContext);
 
             // Root
             rootContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPTO));
@@ -99,6 +97,42 @@ public class LayoutManager : MonoBehaviour
                 subContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.STEPTO));
             }
             FanOutCardListAtPos(rootContext.ChildContexts);
+        }
+    }
+
+    public void SetLockLayout(Context lockContext, Context inventoryContext)
+    {
+        _cardManager.SetActiveContext(lockContext);
+
+        // Root
+        DetachCard(lockContext);
+        lockContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.CLOSEUP));
+        MoveCard(lockContext.GetCard(), mainPos);
+
+        // Inventory
+        foreach (Context subContext in inventoryContext.ChildContexts)
+        {
+            DetachCard(subContext);
+
+            subContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.NOTHING));
+        }
+        FanOutCardListAtPos(inventoryContext.ChildContexts);
+
+        // Back
+        Context backContext = lockContext.GetParentContext();
+        DetachCard(backContext);
+        backContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.STEPTO));
+        MoveCard(backContext.GetCard(), backPos);
+        
+
+        // Discard
+        Context rootContext = _cardManager.GetRootContext();
+        if (rootContext != lockContext && rootContext != backContext)
+        {
+            Context discardContext = rootContext;
+            DetachCard(discardContext);
+            discardContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.NOTHING));
+            MoveCard(discardContext.GetCard(), discardPos);
         }
     }
 
@@ -186,11 +220,6 @@ public class LayoutManager : MonoBehaviour
     public void MoveCard(Card card, Vector2 newPosition)
     {
         card.transform.localPosition = new Vector3(newPosition.x, card.transform.position.y, newPosition.y);
-    }
-
-    public void SetActiveContext(Context activeContext)
-    {
-        _activeContext = activeContext;
     }
 
 }

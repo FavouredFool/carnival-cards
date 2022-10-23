@@ -6,6 +6,6 @@ public class InventoryAction : IOnClickAction
 {
     public void OnClick(CardManager cardManager, Context context)
     {
-        cardManager.ToggleInventory(true);
+        cardManager.InitToggleInventory(true);
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public static class CardTypeManager
 {
-    public enum CardType { COVER, FLAVOR, PLACE, THING, ITEM, INVESTIGATION, INVENTORY }
+    public enum CardType { COVER, FLAVOR, PLACE, THING, ITEM, INVESTIGATION, INVENTORY, LOCK }
 
     public static Color GetColorFromCardType(CardType cardType)
     {
@@ -24,6 +24,8 @@ public static class CardTypeManager
                 return Color.yellow;
             case CardType.INVENTORY:
                 return Color.magenta;
+            case CardType.LOCK:
+                return Color.cyan;
             default:
                 Debug.LogWarning("ERROR");
                 break;

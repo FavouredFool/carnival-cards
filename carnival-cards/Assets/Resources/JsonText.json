@@ -111,6 +111,22 @@
                                             "childContexts": []
                                         }
                                     ]
+                                },
+                                {
+                                    "name": "Glued-Together Book",
+                                    "type": "LOCK",
+                                    "childContexts": [
+                                        {
+                                            "name": "Financially ruined dads headspace",
+                                            "type": "PLACE",
+                                            "childContexts": []
+                                        },
+                                        {
+                                            "name": "A Cat",
+                                            "type": "THING",
+                                            "childContexts": []
+                                        }
+                                    ]
                                 }
                             ]
                         }

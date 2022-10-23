@@ -30,6 +30,8 @@ public class CardManager : MonoBehaviour
 
     private bool _inventoryIsOpen = false;
 
+    private Context _activeContext;
+
 
     private void Start()
     {
@@ -42,7 +44,7 @@ public class CardManager : MonoBehaviour
 
         CreateNewCardDeck();
 
-        _layoutManager.SetActiveContext(_rootContext);
+        SetActiveContext(_rootContext);
         SetLayout(_rootContext);
 
         // Inventory
@@ -142,10 +144,21 @@ public class CardManager : MonoBehaviour
         
     }
 
-    public void SetLayout(Context pressedContext)
+    public void ResetLayout()
     {
         ResetExistingCardDeck();
+        ResetInventory();
+    }
 
+    public void InitSetLayout(Context context)
+    {
+        ResetLayout();
+        ToggleInventory(false);
+        SetLayout(context);
+    }
+
+    public void SetLayout(Context pressedContext)
+    {
         switch (pressedContext.Type)
         {
             case CardType.COVER:
@@ -163,7 +176,27 @@ public class CardManager : MonoBehaviour
             case CardType.INVESTIGATION:
                 _layoutManager.SetBasicLayout(pressedContext);
                 break;
+            case CardType.LOCK:
+                _layoutManager.SetLockLayout(pressedContext, _inventoryContext);
+                break;
         }
+    }
+
+    public void InitToggleInventory(bool change)
+    {
+        ResetLayout();
+        ToggleInventory(change);
+        SetLayout(_activeContext);
+    }
+
+    public void ToggleInventory(bool change)
+    {
+        if (change)
+        {
+            _inventoryIsOpen = !_inventoryIsOpen;
+        }
+
+        _layoutManager.ToggleInventory(_inventoryContext, _inventoryIsOpen);
     }
 
     public void PickUp(Context context)
@@ -177,17 +210,7 @@ public class CardManager : MonoBehaviour
         ToggleInventory(false);
     }
 
-    public void ToggleInventory(bool change)
-    {
-        ResetInventory();
 
-        if (change)
-        {
-            _inventoryIsOpen = !_inventoryIsOpen;
-        }
-
-        _layoutManager.ToggleInventory(_inventoryContext, _inventoryIsOpen);
-    }
 
 
     #region Create Stuff
@@ -258,6 +281,16 @@ public class CardManager : MonoBehaviour
     public List<Context> GetTopContextList()
     {
         return _topContextList;
+    }
+
+    public Context GetActiveContext()
+    {
+        return _activeContext;
+    }
+
+    public void SetActiveContext(Context activeContext)
+    {
+        _activeContext = activeContext;
     }
 
 }
