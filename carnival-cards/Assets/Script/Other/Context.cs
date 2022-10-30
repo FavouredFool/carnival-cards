@@ -13,8 +13,9 @@ public class Context
 
     public string Name { get; set; }
 
-    public List<Context> ChildContexts { get; set; }
+    public string UnlockItemName { get; set; }
 
+    public List<Context> ChildContexts { get; set; }
 
     private Card _card;
 

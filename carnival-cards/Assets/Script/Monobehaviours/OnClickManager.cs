@@ -11,6 +11,7 @@ public class OnClickManager : MonoBehaviour
     private IOnClickAction _lookAtAction;
     private IOnClickAction _pickUpAction;
     private IOnClickAction _inventoryAction;
+    private IOnClickAction _unlockAction;
 
 
     public void Awake()
@@ -20,9 +21,10 @@ public class OnClickManager : MonoBehaviour
         _lookAtAction = new CloseUpAction();
         _pickUpAction = new PickUpAction();
         _inventoryAction = new InventoryAction();
+        _unlockAction = new UnlockAction();
     }
 
-    public enum OnClickAction { STEPTO, CLOSEUP, PICKUP, NOTHING, INVENTORY }
+    public enum OnClickAction { STEPTO, CLOSEUP, PICKUP, NOTHING, INVENTORY, UNLOCK }
 
 
     public IOnClickAction GetActionFromOnClickAction(OnClickAction actionEnum)
@@ -43,6 +45,9 @@ public class OnClickManager : MonoBehaviour
 
             case OnClickAction.INVENTORY:
                 return _inventoryAction;
+
+            case OnClickAction.UNLOCK:
+                return _unlockAction;
 
             default:
                 Debug.LogWarning("FEHLER");

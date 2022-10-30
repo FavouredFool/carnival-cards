@@ -13,11 +13,11 @@ public class LayoutManager : MonoBehaviour
     
 
     Vector2 zeroPos = Vector2.zero;
-    Vector2 mainPos = new(-5, 0);
-    Vector2 backPos = new(-5, 3);
-    Vector2 discardPos = new(5, 3);
-    Vector2 actionPos = new(-5, -2);
-    Vector2 inventoryPos = new(6, -3);
+    Vector2 mainPos = new(-1.8f, 0);
+    Vector2 backPos = new(-3, 1.8f);
+    Vector2 discardPos = new(3, -2);
+    Vector2 actionPos = new(-1.8f, -2);
+    Vector2 inventoryPos = new(3, 0);
 
     public void SetBasicLayout(Context mainContext)
     {
@@ -79,7 +79,7 @@ public class LayoutManager : MonoBehaviour
             _cardManager.SetActiveContext(null);
 
             // Root
-            rootContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPTO));
+            rootContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.STEPTO));
             MoveCard(rootContext.GetCard(), zeroPos);
         }
         else
@@ -87,7 +87,7 @@ public class LayoutManager : MonoBehaviour
             _cardManager.SetActiveContext(rootContext);
 
             // Root
-            rootContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickManager.OnClickAction.STEPTO));
+            rootContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.STEPTO));
             MoveCard(rootContext.GetCard(), backPos);
 
             // Children
@@ -114,7 +114,7 @@ public class LayoutManager : MonoBehaviour
         {
             DetachCard(subContext);
 
-            subContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.NOTHING));
+            subContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.UNLOCK));
         }
         FanOutCardListAtPos(inventoryContext.ChildContexts);
 
@@ -128,6 +128,41 @@ public class LayoutManager : MonoBehaviour
         // Discard
         Context rootContext = _cardManager.GetRootContext();
         if (rootContext != lockContext && rootContext != backContext)
+        {
+            Context discardContext = rootContext;
+            DetachCard(discardContext);
+            discardContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.NOTHING));
+            MoveCard(discardContext.GetCard(), discardPos);
+        }
+    }
+
+    public void SetInventoryLayout(Context inventoryContext)
+    {
+        Context backContext = _cardManager.GetActiveContext();
+        _cardManager.SetActiveContext(inventoryContext);
+
+        // Main
+        inventoryContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.NOTHING));
+        MoveCard(inventoryContext.GetCard(), mainPos);
+
+        // Children
+        List<Context> subContexts = inventoryContext.ChildContexts;
+        foreach (Context subContext in subContexts)
+        {
+            DetachCard(subContext);
+            subContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.NOTHING));
+        }
+        FanOutCardListAtPos(subContexts);
+
+        //Back
+        DetachCard(backContext);
+        backContext.SetOnClickAction(_onClickManager.GetActionFromOnClickAction(OnClickAction.STEPTO));
+        MoveCard(backContext.GetCard(), backPos);
+
+
+        //Discard
+        Context rootContext = _cardManager.GetRootContext();
+        if (rootContext != backContext)
         {
             Context discardContext = rootContext;
             DetachCard(discardContext);
@@ -191,29 +226,28 @@ public class LayoutManager : MonoBehaviour
         }
     }
 
-    /*
-    public void AttachCard(Context contextToAttach, Context baseContext)
-    {
-        if (!_cardManager.GetTopContextList().Contains(contextToAttach))
-        {
-            Debug.LogWarning("FEHLER");
-        }
-
-        baseContext.AttachCardAtEnd(contextToAttach);
-
-        _cardManager.GetTopContextList().Remove(contextToAttach);
-    }
-    */
-
     public void FanOutCardListAtPos(List<Context> cardList)
     {
+        if (cardList.Count > 4)
+        {
+            Debug.LogWarning("ZU VIELE KARTEN");
+        }
+
         for (int i = 0; i < cardList.Count; i++)
         {
             if (cardList[i].Type == CardType.INVESTIGATION) {
+                Debug.LogWarning("ERROR");
                 continue;
             }
 
-            MoveCard(cardList[i].GetCard(), new Vector2(2f * i, 0f));
+            if (cardList.Count > 2)
+            {
+                MoveCard(cardList[i].GetCard(), new Vector2(1.2f * (i % 2), 0.8f - 1.6f * Mathf.Floor(i/2f)));
+            }
+            else
+            {
+                MoveCard(cardList[i].GetCard(), new Vector2(1.2f * i, 0f));
+            }
         }
     }
 

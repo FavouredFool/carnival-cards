@@ -78,17 +78,17 @@
                                             "childContexts": []
                                         },
                                         {
-                                            "name": "Nail",
+                                            "name": "Rail",
                                             "type": "ITEM",
                                             "childContexts": []
                                         },
                                         {
-                                            "name": "Nail",
+                                            "name": "Mail",
                                             "type": "ITEM",
                                             "childContexts": []
                                         },
                                         {
-                                            "name": "Nail",
+                                            "name": "Snail",
                                             "type": "ITEM",
                                             "childContexts": []
                                         }
@@ -115,6 +115,7 @@
                                 {
                                     "name": "Glued-Together Book",
                                     "type": "LOCK",
+                                    "unlockItemName": "Nail",
                                     "childContexts": [
                                         {
                                             "name": "Financially ruined dads headspace",

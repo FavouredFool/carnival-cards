@@ -65,9 +65,12 @@ public class CardManager : MonoBehaviour
 
     public void CloseUpCardback(Context context)
     {
+        Debug.Log("No");
+        return;
+
         // Turn card around, zoom in / enhance. Animation or just "jump"?
-        _closeUpContext = context;
-        context.GetCard().transform.parent = _closeUpPosition;
+        //_closeUpContext = context;
+        //context.GetCard().transform.parent = _closeUpPosition;
     }
 
     public Context FindContextFromCard(Card card)
@@ -107,11 +110,6 @@ public class CardManager : MonoBehaviour
         _closeUpContext = null;
     }
 
-    private void ResetInventory()
-    {
-        ResetCardRepeating(_inventoryContext);
-    }
-
     private void ResetCardRepeating(Context context)
     {
         Card cardToReset = context.GetCard();
@@ -141,20 +139,26 @@ public class CardManager : MonoBehaviour
         }
 
         return card;
-        
     }
 
     public void ResetLayout()
     {
         ResetExistingCardDeck();
+
+        // Reset inventory items
+        _layoutManager.SetInventoryContext(_inventoryContext);
         ResetInventory();
     }
 
     public void InitSetLayout(Context context)
     {
         ResetLayout();
-        ToggleInventory(false);
         SetLayout(context);
+    }
+
+    public void ResetInventory()
+    {
+        ResetCardRepeating(_inventoryContext);
     }
 
     public void SetLayout(Context pressedContext)
@@ -178,6 +182,9 @@ public class CardManager : MonoBehaviour
                 break;
             case CardType.LOCK:
                 _layoutManager.SetLockLayout(pressedContext, _inventoryContext);
+                break;
+            case CardType.INVENTORY:
+                _layoutManager.SetInventoryLayout(pressedContext);
                 break;
         }
     }
@@ -208,6 +215,26 @@ public class CardManager : MonoBehaviour
         AttachContextToContext(context, _inventoryContext);
 
         ToggleInventory(false);
+    }
+
+    public void Unlock(Context context)
+    {
+        if (context.Type != CardType.ITEM)
+        {
+            Debug.LogWarning("ERROR");
+        }
+
+        // Grundarchitektur ändern, sodass Infos wie "wurde bereits unlocked"
+        // auf Klassenebene sitzen und nicht direkt vom CardManager gehändelt werden.
+
+        if (_activeContext.UnlockItemName == context.Name)
+        {
+            Debug.Log("unlocked");
+        }
+        else
+        {
+            Debug.Log("nope");
+        }
     }
 
 
